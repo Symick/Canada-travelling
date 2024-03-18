@@ -4,15 +4,26 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.madcapstone.ui.Components.CanadaTripsBottomBar
+import com.example.madcapstone.ui.screens.AccountScreen
+import com.example.madcapstone.ui.screens.ExploreScreen
+import com.example.madcapstone.ui.screens.HomeScreen
+import com.example.madcapstone.ui.screens.Screens
+import com.example.madcapstone.ui.screens.trips.TripsListScreen
 import com.example.madcapstone.ui.theme.MadCapstoneTheme
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -22,7 +33,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    val nc = rememberNavController()
+                    Scaffold(bottomBar = {
+                        CanadaTripsBottomBar(navController =nc) }){
+                        CanadaTripsNavHost(navHostController = nc, modifier = Modifier.padding(it))
+                    }
                 }
             }
         }
@@ -30,17 +45,12 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MadCapstoneTheme {
-        Greeting("Android")
+private fun CanadaTripsNavHost(navHostController: NavHostController, modifier: Modifier) {
+    NavHost(navController = navHostController, startDestination = Screens.HomeScreen.route) {
+        composable(Screens.HomeScreen.route) { HomeScreen() }
+        composable(Screens.ExploreScreen.route) { ExploreScreen() }
+        composable(Screens.TripsListScreen.route) { TripsListScreen() }
+        composable(Screens.AccountScreen.route) { AccountScreen() }
     }
 }
+

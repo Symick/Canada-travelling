@@ -1,3 +1,10 @@
 <resources>
-    <string name="app_name">MadCapstone</string>
+    <string name="app_name">Canada Travelling</string>
+
+    <string name="screen_label_home">Home</string>
+    <string name="screen_label_trips">My Trips</string>
+    <string name="screen_label_account">Account</string>
+    <string name="screen_label_explore">Explore</string>
+    <string name="screen_label_review">Review</string>
+    <string name="screen_label_new_activities">New Place</string>
 </resources>
