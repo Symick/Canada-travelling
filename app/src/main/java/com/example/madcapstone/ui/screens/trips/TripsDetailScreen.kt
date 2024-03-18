@@ -1,6 +1,5 @@
 package com.example.madcapstone.ui.screens.trips
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -27,8 +26,10 @@ fun TripsDetailScreen(navigateUp: () -> Unit) {
             colors = customTopAppBarColor(),
             navigationIcon = {
                 IconButton(onClick = { navigateUp() }) {
-                    Icon(Icons.Default.KeyboardArrowLeft, "Go To Previous Screen",
-                        modifier = Modifier.size(32.dp))
+                    Icon(
+                        Icons.Default.KeyboardArrowLeft, "Go To Previous Screen",
+                        modifier = Modifier.size(32.dp)
+                    )
                 }
             }
         )

@@ -1,6 +1,7 @@
 package com.example.madcapstone
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,22 +10,26 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.madcapstone.ui.Components.CanadaTripsBottomBar
 import com.example.madcapstone.ui.screens.AccountScreen
 import com.example.madcapstone.ui.screens.ExploreScreen
 import com.example.madcapstone.ui.screens.HomeScreen
 import com.example.madcapstone.ui.screens.Screens
+import com.example.madcapstone.ui.screens.auth.SignInScreen
 import com.example.madcapstone.ui.screens.trips.TripsDetailScreen
 import com.example.madcapstone.ui.screens.trips.TripsListScreen
 import com.example.madcapstone.ui.theme.MadCapstoneTheme
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 class MainActivity : ComponentActivity() {
 
@@ -41,10 +46,10 @@ class MainActivity : ComponentActivity() {
                     val nc = rememberNavController()
                     Scaffold(
                         bottomBar = {
-                            CanadaTripsBottomBar(navController = nc)
+                            BottomBar(nc)
                         }
                     ) {
-                        CanadaTripsNavHost(navHostController = nc, modifier = Modifier.padding(it))
+                        CanadaTripsNavHost(nc = nc, modifier = Modifier.padding(it))
                     }
                 }
             }
@@ -53,15 +58,45 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-private fun CanadaTripsNavHost(navHostController: NavHostController, modifier: Modifier) {
-    NavHost(navController = navHostController, startDestination = Screens.HomeScreen.route) {
+private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
+    NavHost(navController = nc, startDestination = Screens.HomeScreen.route) {
         composable(Screens.HomeScreen.route) { HomeScreen() }
         composable(Screens.ExploreScreen.route) { ExploreScreen() }
-        composable(Screens.TripsListScreen.route) { TripsListScreen(navigateTo = {navHostController.navigate(it)}) }
-        composable(Screens.AccountScreen.route) { AccountScreen() }
-        composable(Screens.TripsDetailScreen.route) { TripsDetailScreen {
-             navHostController.popBackStack()
-        }}
+        composable(Screens.TripsListScreen.route) {
+            if (Firebase.auth.currentUser != null) {
+                TripsListScreen(navigateTo = { nc.navigate(it) })
+            } else {
+                nc.navigate(Screens.SignInScreen.route) {
+                    popUpTo(Screens.HomeScreen.route)
+                }
+            }
+        }
+        composable(Screens.AccountScreen.route) {
+            if (Firebase.auth.currentUser != null) {
+                AccountScreen()
+            } else {
+                nc.navigate(Screens.SignInScreen.route) {
+                    popUpTo(Screens.HomeScreen.route)
+                }
+            }
+        }
+        composable(Screens.TripsDetailScreen.route) { TripsDetailScreen(navigateUp = { nc.popBackStack() }) }
+        composable(Screens.SignInScreen.route) { SignInScreen(navigateUp = { nc.popBackStack() }) }
     }
+}
+
+@Composable
+fun BottomBar(navController: NavHostController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
+    val noBottomBarRoutes = listOf(
+        Screens.SignInScreen.route,
+        Screens.SignUpScreen.route
+    )
+    if (currentDestination?.route in noBottomBarRoutes) {
+        return
+    }
+    CanadaTripsBottomBar(navController)
+
 }
 
