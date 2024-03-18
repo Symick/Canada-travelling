@@ -1,4 +1,4 @@
-package com.example.madcapstone.ui.Components
+package com.example.madcapstone.ui.components
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width

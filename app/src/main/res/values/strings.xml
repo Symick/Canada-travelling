@@ -7,4 +7,22 @@
     <string name="screen_label_explore">Explore</string>
     <string name="screen_label_review">Review</string>
     <string name="screen_label_new_activities">New Place</string>
+    <string name="welcome_back">Welcome Back</string>
+    <string name="gmail_login_button_text">Sign in with Google</string>
+    <string name="login_divider_text">Or sign in with</string>
+    <string name="sign_in">Sign in</string>
+    <string name="email_label">Email</string>
+    <string name="password_label">Password</string>
+    <string name="email_placeholder">travellover@outlook.com</string>
+    <string name="no_account_yet">Don\'t have an account yet?</string>
+    <string name="sign_up">Sign up</string>
+    <string name="lets_get_started">Let\'s get started</string>
+    <string name="name_label">Name</string>
+    <string name="name_placeholder">John Doe</string>
+    <string name="already_have_account">Already have an account?</string>
+    <string name="confirm_password_label">Confirm password</string>
+    <string name="invalid_email">Invalid email</string>
+    <string name="password_mismatch">Password mismatch</string>
+    <string name="password_length">Password must be at least 6 characters</string>
+    <string name="empty_name">Name cannot be empty</string>
 </resources>

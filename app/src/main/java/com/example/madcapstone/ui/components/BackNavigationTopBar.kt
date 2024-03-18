@@ -1,4 +1,4 @@
-package com.example.madcapstone.ui.Components
+package com.example.madcapstone.ui.components
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
