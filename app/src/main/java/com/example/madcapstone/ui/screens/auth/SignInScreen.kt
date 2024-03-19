@@ -1,5 +1,7 @@
 package com.example.madcapstone.ui.screens.auth
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -44,20 +46,30 @@ import com.example.madcapstone.ui.components.utils.TextDivider
 import com.example.madcapstone.ui.screens.Screens
 import com.example.madcapstone.utils.Utils
 import com.example.madcapstone.viewmodels.AuthViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
 @Composable
-fun SignInScreen(navigateUp: () -> Unit, navigateTo: (String) -> Unit, viewModel: AuthViewModel){
+fun SignInScreen(navigateUp: () -> Unit, navigateTo: (String) -> Unit, viewModel: AuthViewModel) {
     Scaffold(topBar = {
         BackNavigationTopBar {
             navigateUp()
         }
     }) {
-        ScreenContent(modifier = Modifier.padding(it), navigateTo = navigateTo, viewModel = viewModel)
+        ScreenContent(
+            modifier = Modifier.padding(it),
+            navigateTo = navigateTo,
+            viewModel = viewModel
+        )
     }
 }
 
 @Composable
-private fun ScreenContent(modifier: Modifier, navigateTo: (String) -> Unit, viewModel: AuthViewModel) {
+private fun ScreenContent(
+    modifier: Modifier,
+    navigateTo: (String) -> Unit,
+    viewModel: AuthViewModel
+) {
     val authState by viewModel.authState.observeAsState()
 
     if (authState is Resource.Success) {
@@ -66,8 +78,23 @@ private fun ScreenContent(modifier: Modifier, navigateTo: (String) -> Unit, view
     }
 
     if (authState is Resource.Error) {
-        Utils.showToast(LocalContext.current, (authState as Resource.Error<Boolean>).message ?: "An error occurred")
+        Utils.showToast(
+            LocalContext.current,
+            (authState as Resource.Error<Boolean>).message ?: "An error occurred"
+        )
     }
+
+    val context = LocalContext.current
+
+    //setup google intent launcher
+//    Based on code found at https://www.composables.com/tutorials/firebase-auth
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+            val account = task.result
+            viewModel.signInWithGoogle(account?.idToken ?: "")
+        }
+
 
     Column(
         modifier
@@ -81,7 +108,16 @@ private fun ScreenContent(modifier: Modifier, navigateTo: (String) -> Unit, view
         //google login button
         Button(
             enabled = authState !is Resource.Loading,
-            onClick = { /*TODO*/ }, modifier = Modifier.fillMaxWidth(),
+            onClick = {
+                val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken(context.getString(R.string.default_web_client_id))
+                    .requestEmail()
+                    .build()
+                val googleSignInClient = GoogleSignIn.getClient(context, gso)
+                val signInIntent = googleSignInClient.signInIntent
+                launcher.launch(signInIntent)
+            },
+            modifier = Modifier.fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = Color.White),
             shape = RoundedCornerShape(15.dp),
             contentPadding = PaddingValues(16.dp)
@@ -121,7 +157,10 @@ private fun ScreenContent(modifier: Modifier, navigateTo: (String) -> Unit, view
 }
 
 @Composable
-private fun SignInForm(authState: Resource<Boolean>?, signIn: (email: String, password: String) -> Unit) {
+private fun SignInForm(
+    authState: Resource<Boolean>?,
+    signIn: (email: String, password: String) -> Unit
+) {
     Column(Modifier.fillMaxWidth()) {
         var emailState by remember { mutableStateOf("") }
         var passwordState by remember { mutableStateOf("") }
@@ -143,7 +182,7 @@ private fun SignInForm(authState: Resource<Boolean>?, signIn: (email: String, pa
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             enabled = authState !is Resource.Loading,
-            onClick = {signIn(emailState, passwordState)},
+            onClick = { signIn(emailState, passwordState) },
             modifier = Modifier.fillMaxWidth(),
         ) {
             if (authState is Resource.Loading) {

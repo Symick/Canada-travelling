@@ -25,4 +25,5 @@
     <string name="password_mismatch">Password mismatch</string>
     <string name="password_length">Password must be at least 6 characters</string>
     <string name="empty_name">Name cannot be empty</string>
+    <string name="default_web_client_id" translatable="false">766743554565-4grblv6ml18l4lnig4dikc32upq1geu9.apps.googleusercontent.com</string>
 </resources>

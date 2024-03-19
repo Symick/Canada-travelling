@@ -37,9 +37,9 @@ class AuthViewModel() : ViewModel() {
             _authState.value = Resource.Loading()
             try {
                 val authResult = authRepository.signUp(email, password)
-                _authState.value = Resource.Success(authResult != null)
+                _authState.value = Resource.Success(true)
 
-                val user = authResult?.user
+                val user = authResult.user
                 user?.let {
                     authRepository.addUserToFirestore(it.uid, email, name)
                 }
@@ -59,6 +59,28 @@ class AuthViewModel() : ViewModel() {
                 _authState.value = Resource.Success(authResult != null)
             } catch (e: Exception) {
                 _authState.value = Resource.Error(e.message ?: "An unknown error occurred while signing in.")
+            }
+        }
+    }
+
+    fun signInWithGoogle(idToken: String) {
+        viewModelScope.launch {
+            _authState.value = Resource.Loading()
+            try {
+                val authResult = authRepository.signInWithGoogle(idToken)
+
+                val newUser = authResult.additionalUserInfo?.isNewUser
+
+                if (newUser == true) {
+                    val user = authResult.user
+                    user?.let {
+                        authRepository.addUserToFirestore(it.uid, it.email ?: "", it.displayName ?: "", it.photoUrl)
+                    }
+                }
+
+                _authState.value = Resource.Success(true)
+            } catch (e: Exception) {
+                _authState.value = Resource.Error(e.localizedMessage ?: "An unknown error occurred while signing in with Google.")
             }
         }
     }
