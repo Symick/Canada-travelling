@@ -37,6 +37,7 @@ fun PasswordTextField(
         onValueChange = onValueChange,
         label = {Text(stringResource(label))},
         modifier = modifier,
+        singleLine = true,
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Password),
         leadingIcon = {Icon(Icons.Default.Lock, "Password Lock")},

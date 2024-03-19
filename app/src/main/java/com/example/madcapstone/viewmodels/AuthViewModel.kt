@@ -2,6 +2,7 @@ package com.example.madcapstone.viewmodels
 
 import android.util.Patterns
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.madcapstone.data.util.Resource
@@ -10,6 +11,10 @@ import kotlinx.coroutines.launch
 
 class AuthViewModel() : ViewModel() {
     private val authRepository = AuthRepository()
+
+    private val _authState = MutableLiveData<Resource<Boolean>>(Resource.Empty())
+    val authState: LiveData<Resource<Boolean>> get() = _authState
+
     fun isValidateEmail(email: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches() && email.isNotBlank()
     }
@@ -26,23 +31,47 @@ class AuthViewModel() : ViewModel() {
         return password == confirmPassword
     }
 
-    fun signUp(email: String, password: String, name: String): LiveData<Resource<Boolean>> {
-        if (isValidateEmail(email) && isValidatePassword(password) && isValidateName(name) && isPasswordMatch(password, password)) {
-            viewModelScope.launch {
-                authRepository.signUp(email, password)
-            }
+    fun signUp(email: String, password: String, name: String) {
 
+        viewModelScope.launch {
+            _authState.value = Resource.Loading()
+            try {
+                val authResult = authRepository.signUp(email, password)
+                _authState.value = Resource.Success(authResult != null)
+
+                val user = authResult?.user
+                user?.let {
+                    authRepository.addUserToFirestore(it.uid, email, name)
+                }
+
+            } catch (e: Exception) {
+                _authState.value = Resource.Error(e.message ?: "An unknown error occurred while signing up.")
+            }
         }
+
     }
 
     fun signIn(email: String, password: String) {
+        viewModelScope.launch {
+            _authState.value = Resource.Loading()
+            try {
+                val authResult = authRepository.signIn(email, password)
+                _authState.value = Resource.Success(authResult != null)
+            } catch (e: Exception) {
+                _authState.value = Resource.Error(e.message ?: "An unknown error occurred while signing in.")
+            }
+        }
     }
 
     fun signOut() {
+        authRepository.signOut()
     }
 
     fun deleteAccount() {
     }
 
+    fun resetState() {
+        _authState.value = Resource.Empty()
+    }
 
 }

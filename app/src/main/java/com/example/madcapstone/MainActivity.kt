@@ -75,7 +75,7 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
         }
         composable(Screens.AccountScreen.route) {
             if (Firebase.auth.currentUser != null) {
-                AccountScreen()
+                AccountScreen(viewModel = authViewModel, navigateTo = { nc.navigate(it) })
             } else {
                 nc.navigate(Screens.SignInScreen.route) {
                     popUpTo(Screens.HomeScreen.route)
@@ -86,10 +86,14 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
         composable(Screens.SignInScreen.route) {
             SignInScreen(
                 navigateUp = { nc.popBackStack() },
-                navigateTo = { nc.navigate(it) })
+                navigateTo = { nc.navigate(it) },
+                viewModel = authViewModel)
         }
         composable(Screens.SignUpScreen.route) {
-            SignUpScreen(viewModel = authViewModel, navigateUp = { nc.popBackStack() })
+            SignUpScreen(
+                viewModel = authViewModel,
+                navigateUp = { nc.popBackStack() },
+                navigateTo = { nc.navigate(it) })
         }
     }
 }
