@@ -42,6 +42,7 @@ class AuthViewModel() : ViewModel() {
                 val user = authResult.user
                 user?.let {
                     authRepository.addUserToFirestore(it.uid, email, name)
+                    authRepository.updateFirebaseUser(displayName = name)
                 }
 
             } catch (e: Exception) {

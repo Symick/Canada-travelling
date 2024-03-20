@@ -1,5 +1,6 @@
 package com.example.madcapstone.ui.screens.auth
 
+import android.app.Activity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -90,9 +91,11 @@ private fun ScreenContent(
 //    Based on code found at https://www.composables.com/tutorials/firebase-auth
     val launcher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
-            val account = task.result
-            viewModel.signInWithGoogle(account?.idToken ?: "")
+            if (it.resultCode == Activity.RESULT_OK) {
+                val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+                val account = task.result
+                viewModel.signInWithGoogle(account?.idToken ?: "")
+            }
         }
 
 
