@@ -33,7 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.madcapstone.R
 import com.example.madcapstone.data.util.Resource
-import com.example.madcapstone.rememberSignUpErrorState
+import com.example.madcapstone.state.rememberSignUpErrorState
 import com.example.madcapstone.ui.components.BackNavigationTopBar
 import com.example.madcapstone.ui.components.utils.PasswordTextField
 import com.example.madcapstone.ui.screens.Screens

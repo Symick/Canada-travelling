@@ -1,4 +1,4 @@
-package com.example.madcapstone
+package com.example.madcapstone.state
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState

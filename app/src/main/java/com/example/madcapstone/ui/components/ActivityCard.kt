@@ -1,6 +1,5 @@
 package com.example.madcapstone.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.madcapstone.R
 import com.example.madcapstone.data.models.Activity
 import com.example.madcapstone.ui.components.utils.RatingBar
@@ -50,8 +50,13 @@ fun ReviewActivityCard(activity: Activity) {
 }
 
 @Composable
+fun ExploreActivityCard(activity: Activity, onHearted: (Activity) -> Unit) {
+    LargeActivityCard(activity, ActivityCardType.SEARCH, onHearted = onHearted)
+}
+
+@Composable
 fun TripActivityCard(activity: Activity, onDelete: (Activity) -> Unit, onEdit: (Activity) -> Unit) {
-    LargeActivityCard(activity, ActivityCardType.TRIP, onDelete, onEdit)
+    LargeActivityCard(activity, ActivityCardType.TRIP, onDelete = onDelete, onEdit = onEdit)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,11 +84,11 @@ private fun SmallActivityCard(
     ) {
         Row {
             //TODO Async image from activity.imageUrl
-            Image(
-                painter = painterResource(id = R.drawable.gondola),
-                contentDescription = null,
-                modifier = Modifier.weight(0.4f),
-                contentScale = ContentScale.Crop
+            AsyncImage(
+                model = activity.imageUrl,
+                contentDescription = "Activity image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.weight(0.4f)
             )
             Column(
                 Modifier
@@ -144,22 +149,23 @@ private fun LargeActivityCard(
 ) {
     val iconButtonSize = 30.dp
     val iconSize = 20.dp
+    val topAndEndPadding = if (type == ActivityCardType.SEARCH) 16.dp else 8.dp
     ElevatedCard(
         Modifier
             .width(350.dp)
             .height(150.dp)
     ) {
         Row {
-            Image(
-                painterResource(id = R.drawable.gondola),
-                contentDescription = null,
-                Modifier.weight(0.4f),
-                contentScale = ContentScale.Crop
+            AsyncImage(
+                model = activity.imageUrl,
+                contentDescription = "Activity image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.weight(0.4f)
             )
             Column(
                 Modifier
                     .weight(0.6f)
-                    .padding(top = 8.dp, start = 16.dp, end = 8.dp, bottom = 16.dp)
+                    .padding(top = topAndEndPadding, start = 16.dp, end = topAndEndPadding, bottom = 16.dp)
                     .fillMaxSize()
             ) {
                 if (type == ActivityCardType.TRIP) {
@@ -217,7 +223,11 @@ private fun LargeActivityCard(
 }
 
 private fun getPriceText(activity: Activity): String {
-    return if (activity.isFree) "Free" else "€${Utils.formatLocalePrice(activity.minPrice)} - €${Utils.formatLocalePrice(activity.maxPrice)}"
+    return if (activity.isFree) "Free" else "€${Utils.formatLocalePrice(activity.minPrice)} - €${
+        Utils.formatLocalePrice(
+            activity.maxPrice
+        )
+    }"
 }
 
 @Composable
@@ -228,7 +238,8 @@ private fun MonthlyVisitorsDisplay(visitors: Int) {
             style = MaterialTheme.typography.bodySmall,
             fontWeight = FontWeight.Bold
         )
-        Text(text = " ${Utils.formatBigNumber(visitors)}",
+        Text(
+            text = " ${Utils.formatBigNumber(visitors)}",
             style = MaterialTheme.typography.bodySmall
         )
     }
@@ -236,5 +247,5 @@ private fun MonthlyVisitorsDisplay(visitors: Int) {
 }
 
 private enum class ActivityCardType {
-    TRIP, NORMAL, REVIEW
+    TRIP, NORMAL, REVIEW, SEARCH
 }
