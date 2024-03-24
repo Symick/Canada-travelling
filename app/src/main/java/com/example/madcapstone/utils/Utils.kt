@@ -6,6 +6,7 @@ import android.net.NetworkCapabilities
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.material3.SnackbarHostState
+import java.text.DecimalFormat
 
 class Utils {
 
@@ -28,6 +29,14 @@ class Utils {
             val networkCapabilities = cm.getNetworkCapabilities(activeNetwork)
             return networkCapabilities != null &&
                     networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        }
+
+        fun formatBigNumber(number: Int): String {
+            return DecimalFormat("#,###").format(number)
+        }
+
+        fun formatLocalePrice(price: Double? = 0.0): String {
+            return DecimalFormat("#,###.##").format(price)
         }
     }
 }
