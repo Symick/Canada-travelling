@@ -1,6 +1,7 @@
 package com.example.madcapstone.ui.screens.auth
 
 import android.app.Activity
+import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -83,6 +84,7 @@ private fun ScreenContent(
             LocalContext.current,
             (authState as Resource.Error<Boolean>).message ?: "An error occurred"
         )
+        viewModel.resetState()
     }
 
     val context = LocalContext.current
@@ -95,6 +97,9 @@ private fun ScreenContent(
                 val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
                 val account = task.result
                 viewModel.signInWithGoogle(account?.idToken ?: "")
+            } else {
+                Utils.showToast(context, "Google Sign In Failed")
+                viewModel.resetState()
             }
         }
 
@@ -112,6 +117,12 @@ private fun ScreenContent(
         Button(
             enabled = authState !is Resource.Loading,
             onClick = {
+                //check for internet connection
+                if (!Utils.hasInternetConnection(context)) {
+                    Utils.showToast(context, "No internet connection")
+                    return@Button
+                }
+                // Configure Google Sign In
                 val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                     .requestIdToken(context.getString(R.string.default_web_client_id))
                     .requestEmail()
@@ -138,7 +149,8 @@ private fun ScreenContent(
                 Spacer(modifier = Modifier.size(16.dp))
                 Text(
                     stringResource(R.string.gmail_login_button_text),
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    color = Color.DarkGray
                 )
             }
         }
@@ -162,7 +174,7 @@ private fun ScreenContent(
 @Composable
 private fun SignInForm(
     authState: Resource<Boolean>?,
-    signIn: (email: String, password: String) -> Unit
+    signIn: (email: String, password: String) -> Unit,
 ) {
     Column(Modifier.fillMaxWidth()) {
         var emailState by remember { mutableStateOf("") }
@@ -185,7 +197,8 @@ private fun SignInForm(
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             enabled = authState !is Resource.Loading,
-            onClick = { signIn(emailState, passwordState) },
+            onClick = {signIn(emailState, passwordState)
+                      },
             modifier = Modifier.fillMaxWidth(),
         ) {
             if (authState is Resource.Loading) {

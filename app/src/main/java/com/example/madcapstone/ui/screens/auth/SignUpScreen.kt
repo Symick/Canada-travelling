@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.madcapstone.R
 import com.example.madcapstone.data.util.Resource
+import com.example.madcapstone.rememberSignUpErrorState
 import com.example.madcapstone.ui.components.BackNavigationTopBar
 import com.example.madcapstone.ui.components.utils.PasswordTextField
 import com.example.madcapstone.ui.screens.Screens
@@ -101,9 +102,11 @@ private fun SignUpForm(viewModel: AuthViewModel, navigateTo: (String) -> Unit){
         val context = LocalContext.current
 
         val authState by viewModel.authState.observeAsState()
+        var signUpErrorState by rememberSignUpErrorState()
 
         if (authState is Resource.Error) {
             Utils.showToast(context, (authState as Resource.Error<Boolean>).message ?: "Error")
+            viewModel.resetState()
         }
 
         if (authState is Resource.Success) {
@@ -118,7 +121,8 @@ private fun SignUpForm(viewModel: AuthViewModel, navigateTo: (String) -> Unit){
             placeholder = { Text(stringResource(R.string.name_placeholder)) },
             leadingIcon = { Icon(Icons.Default.Person, contentDescription = "name") },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            isError = signUpErrorState.nameError
         )
 
         OutlinedTextField(
@@ -128,43 +132,64 @@ private fun SignUpForm(viewModel: AuthViewModel, navigateTo: (String) -> Unit){
             placeholder = { Text(stringResource(R.string.email_placeholder)) },
             leadingIcon = { Icon(Icons.Default.Email, contentDescription = "email") },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            isError = signUpErrorState.emailError
         )
+
         Spacer(modifier = Modifier.height(8.dp))
+
         PasswordTextField(
             value = passwordState,
             onValueChange = { passwordState = it },
-            Modifier.fillMaxWidth()
+            Modifier.fillMaxWidth(),
+            isError = signUpErrorState.passwordError || signUpErrorState.confirmPasswordError
         )
+
         Spacer(modifier = Modifier.height(8.dp))
+
         PasswordTextField(
             value = confirmPasswordState,
             onValueChange = { confirmPasswordState = it },
             label = R.string.confirm_password_label,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            isError = signUpErrorState.confirmPasswordError
         )
         Spacer(modifier = Modifier.height(16.dp))
         Button(
             enabled = authState !is Resource.Loading,
             onClick = {
                 var hasError = false
-                if (!viewModel.isValidateEmail(emailState)) {
-                    Utils.showToast(context, R.string.invalid_email)
-                    hasError = true
-                }
-                if (!viewModel.isValidatePassword(passwordState)) {
-                    Utils.showToast(context, R.string.password_length)
-                    hasError = true
-                }
-                if (!viewModel.isPasswordMatch(passwordState, confirmPasswordState)) {
-                    Utils.showToast(context, R.string.password_mismatch)
-                    hasError = true
-                }
-
                 if (!viewModel.isValidateName(nameState)) {
                     Utils.showToast(context, R.string.empty_name)
+                    signUpErrorState = signUpErrorState.copy(nameError = true)
                     hasError = true
+                } else {
+                    signUpErrorState = signUpErrorState.copy(nameError = false)
                 }
+                if (!viewModel.isValidateEmail(emailState)) {
+                    Utils.showToast(context, R.string.invalid_email)
+                    signUpErrorState = signUpErrorState.copy(emailError = true)
+                    hasError = true
+                } else {
+                    signUpErrorState = signUpErrorState.copy(emailError = false)
+                }
+
+                if (!viewModel.isValidatePassword(passwordState)) {
+                    Utils.showToast(context, R.string.password_length)
+                    signUpErrorState = signUpErrorState.copy(passwordError = true)
+                    hasError = true
+                } else {
+                    signUpErrorState = signUpErrorState.copy(passwordError = false)
+                }
+
+                if (!viewModel.isPasswordMatch(passwordState, confirmPasswordState)) {
+                    Utils.showToast(context, R.string.password_mismatch)
+                    signUpErrorState = signUpErrorState.copy(confirmPasswordError = true)
+                    hasError = true
+                } else {
+                    signUpErrorState = signUpErrorState.copy(confirmPasswordError = false)
+                }
+
                 if (!hasError) {
                     viewModel.signUp(emailState, passwordState, nameState)
                 }

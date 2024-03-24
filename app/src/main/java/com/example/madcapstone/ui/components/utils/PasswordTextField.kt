@@ -27,7 +27,8 @@ fun PasswordTextField(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    @StringRes label:  Int = R.string.password_label
+    @StringRes label:  Int = R.string.password_label,
+    isError: Boolean = false
 ) {
     var passwordVisible by remember {
         mutableStateOf(false)
@@ -38,6 +39,7 @@ fun PasswordTextField(
         label = {Text(stringResource(label))},
         modifier = modifier,
         singleLine = true,
+        isError = isError,
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions( keyboardType = KeyboardType.Password),
         leadingIcon = {Icon(Icons.Default.Lock, "Password Lock")},

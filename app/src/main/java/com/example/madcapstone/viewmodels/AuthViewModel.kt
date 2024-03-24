@@ -1,15 +1,19 @@
 package com.example.madcapstone.viewmodels
 
+import android.app.Application
+import android.content.Context
 import android.util.Patterns
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.madcapstone.data.util.Resource
 import com.example.madcapstone.repository.AuthRepository
+import com.example.madcapstone.utils.Utils
 import kotlinx.coroutines.launch
 
-class AuthViewModel() : ViewModel() {
+class AuthViewModel(private val application: Application) : AndroidViewModel(application) {
     private val authRepository = AuthRepository()
 
     private val _authState = MutableLiveData<Resource<Boolean>>(Resource.Empty())
@@ -53,13 +57,22 @@ class AuthViewModel() : ViewModel() {
     }
 
     fun signIn(email: String, password: String) {
+        if(!Utils.hasInternetConnection(application.applicationContext)) {
+            _authState.value = Resource.Error("No internet connection")
+            return
+        }
+        if (!isValidateEmail(email) || !isValidatePassword(password)) {
+            _authState.value = Resource.Error("Inputs cannot be empty!")
+            return
+        }
+
         viewModelScope.launch {
             _authState.value = Resource.Loading()
             try {
                 val authResult = authRepository.signIn(email, password)
-                _authState.value = Resource.Success(authResult != null)
+                _authState.value = Resource.Success(true)
             } catch (e: Exception) {
-                _authState.value = Resource.Error(e.message ?: "An unknown error occurred while signing in.")
+                _authState.value = Resource.Error("Fill in the correct credentials!")
             }
         }
     }
@@ -78,7 +91,6 @@ class AuthViewModel() : ViewModel() {
                         authRepository.addUserToFirestore(it.uid, it.email ?: "", it.displayName ?: "", it.photoUrl)
                     }
                 }
-
                 _authState.value = Resource.Success(true)
             } catch (e: Exception) {
                 _authState.value = Resource.Error(e.localizedMessage ?: "An unknown error occurred while signing in with Google.")
@@ -96,5 +108,4 @@ class AuthViewModel() : ViewModel() {
     fun resetState() {
         _authState.value = Resource.Empty()
     }
-
 }

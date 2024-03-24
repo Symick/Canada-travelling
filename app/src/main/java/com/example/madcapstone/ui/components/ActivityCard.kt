@@ -25,7 +25,7 @@ import com.example.madcapstone.ui.components.utils.RatingBar
 fun ActivityCard(
     activity: Activity,
     size: ActivityCardSize,
-    type: ActivityCardType<> = ActivityCardType.NORMAL
+    type: ActivityCardType = ActivityCardType.NORMAL
 ) {
     when (size) {
         ActivityCardSize.SMALL -> SmallActivityCard(activity)
