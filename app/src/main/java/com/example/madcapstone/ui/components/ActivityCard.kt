@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,10 +24,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,30 +44,42 @@ import com.example.madcapstone.utils.Utils
 @Composable
 fun SmallActivityCard(
     activity: Activity,
+    onClick: (Activity) -> Unit
 ) {
-    SmallActivityCard(activity, ActivityCardType.NORMAL)
+    SmallActivityCard(activity, ActivityCardType.NORMAL, onClick = onClick)
 }
 
 @Composable
-fun ReviewActivityCard(activity: Activity) {
-    SmallActivityCard(activity, ActivityCardType.REVIEW)
+fun ReviewActivityCard(activity: Activity, onClick: (Activity) -> Unit, onReview: (Activity, rating:Int) -> Unit ) {
+    SmallActivityCard(activity, ActivityCardType.REVIEW, onClick = onClick, onReview = onReview)
 }
 
 @Composable
-fun ExploreActivityCard(activity: Activity, onHearted: (Activity) -> Unit) {
-    LargeActivityCard(activity, ActivityCardType.SEARCH, onHearted = onHearted)
+fun ExploreActivityCard(
+    activity: Activity,
+    onClick: (Activity) -> Unit,
+    onHearted: (Activity) -> Unit
+) {
+    LargeActivityCard(activity, ActivityCardType.SEARCH, onClick = onClick, onHearted = onHearted)
 }
 
 @Composable
-fun TripActivityCard(activity: Activity, onDelete: (Activity) -> Unit, onEdit: (Activity) -> Unit) {
-    LargeActivityCard(activity, ActivityCardType.TRIP, onDelete = onDelete, onEdit = onEdit)
+fun TripActivityCard(
+    activity: Activity,
+    onClick: (Activity) -> Unit,
+    onDelete: (Activity) -> Unit,
+    onEdit: (Activity) -> Unit
+) {
+    LargeActivityCard(activity, ActivityCardType.TRIP, onClick = onClick, onDelete = onDelete, onEdit = onEdit)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SmallActivityCard(
     activity: Activity,
-    type: ActivityCardType = ActivityCardType.NORMAL
+    type: ActivityCardType = ActivityCardType.NORMAL,
+    onClick: (Activity) -> Unit,
+    onReview: ((Activity, Int) -> Unit)? = null
 ) {
     var reviewScore by remember { mutableIntStateOf(0) }
     var priceText = ""
@@ -79,7 +95,7 @@ private fun SmallActivityCard(
             contentColor = MaterialTheme.colorScheme.onSurface
         ),
         onClick = {
-            //TODO navigate to activity details
+            onClick(activity)
         }
     ) {
         Row {
@@ -117,8 +133,8 @@ private fun SmallActivityCard(
                         RatingBar(
                             rating = reviewScore,
                             onRatingChange = {
-                                // TODO navigate to review screen
                                 reviewScore = it
+                                onReview!!(activity, it)
                             },
                             iconSize = smallIconSize,
                         )
@@ -139,21 +155,30 @@ private fun SmallActivityCard(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LargeActivityCard(
     activity: Activity,
     type: ActivityCardType,
+    onClick: (Activity) -> Unit,
     onDelete: ((Activity) -> Unit)? = null,
     onEdit: ((Activity) -> Unit)? = null,
     onHearted: ((Activity) -> Unit)? = null,
 ) {
     val iconButtonSize = 30.dp
     val iconSize = 20.dp
-    val topAndEndPadding = if (type == ActivityCardType.SEARCH) 16.dp else 8.dp
+    val topAndEndPadding = 8.dp
     ElevatedCard(
-        Modifier
+        modifier = Modifier
             .width(350.dp)
-            .height(150.dp)
+            .height(150.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+            contentColor = MaterialTheme.colorScheme.onSurface
+        ),
+        onClick = {
+            onClick(activity)
+        }
     ) {
         Row {
             AsyncImage(
@@ -165,7 +190,12 @@ private fun LargeActivityCard(
             Column(
                 Modifier
                     .weight(0.6f)
-                    .padding(top = topAndEndPadding, start = 16.dp, end = topAndEndPadding, bottom = 16.dp)
+                    .padding(
+                        top = topAndEndPadding,
+                        start = 16.dp,
+                        end = topAndEndPadding,
+                        bottom = 16.dp
+                    )
                     .fillMaxSize()
             ) {
                 if (type == ActivityCardType.TRIP) {
@@ -200,16 +230,45 @@ private fun LargeActivityCard(
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                 }
+
                 Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween) {
                     Column {
-                        Text(
-                            text = activity.name,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
+                        Row(verticalAlignment = Alignment.Bottom) {
+                            Text(
+                                text = activity.name,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            if (type == ActivityCardType.SEARCH) {
+                                var heartState by remember { mutableStateOf(false) }
+                                Spacer(modifier = Modifier.width(8.dp))
+                                IconButton(
+                                    onClick = {
+                                        heartState = !heartState
+                                        onHearted!!(activity)
+                                    },
+                                    modifier = Modifier.size(iconButtonSize)
+                                ) {
+                                    Icon(
+                                        if (heartState) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                        contentDescription = "Favorite",
+                                        Modifier.size(iconSize),
+                                        tint = Color.Red
+                                    )
+                                }
+                            }
+                        }
                         Text(
                             text = activity.place,
                             style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+
+                    if (type == ActivityCardType.SEARCH) {
+                        RatingBar(
+                            rating = activity.rating,
+                            reviewers = activity.amountOfReviews,
+                            iconSize = 14.dp
                         )
                     }
 

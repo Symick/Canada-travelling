@@ -45,7 +45,7 @@ fun HomeScreen() {
                 imageUrl = "https://firebasestorage.googleapis.com/v0/b/canada-travelling.appspot.com/o/activities%2Fritik-gautam-eJTt94NgIHs-unsplash.jpg?alt=media&token=7e0903bb-3be7-48df-b675-167786156a0d",
                 isFree = false,
             )
-            ExploreActivityCard(activity = activity, onHearted = { /*TODO*/ })
+            ExploreActivityCard(activity = activity, onClick = {}, onHearted = { /*TODO*/ })
         }
     }
 }

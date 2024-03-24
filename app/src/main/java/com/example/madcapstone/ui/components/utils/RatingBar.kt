@@ -45,7 +45,7 @@ fun RatingBar(
                 modifier = Modifier.size(iconSize),
             )
         }
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(6.dp))
         Text(
             text = "$reviewers",
             color = MaterialTheme.colorScheme.onSurface,
