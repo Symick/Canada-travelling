@@ -4,17 +4,27 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import com.example.madcapstone.state.SearchFilterState
 
 data class SearchFilterState(
-    var minPrice: Double = 0.0,
-    var maxPrice: Double = 0.0,
-    var minRating: Double = 0.0,
-    var minAmountOfVisitors: Int = 0,
-)
+    var minPrice: Float? = null,
+    var maxPrice: Float? = null,
+    var minRating: Int? = null,
+    var minAmountOfVisitors: Int? = null,
+) {
+    fun clearFilters() {
+        minPrice = null
+        maxPrice = null
+        minRating = null
+        minAmountOfVisitors = null
+    }
+
+    fun activeFilters(): Boolean {
+        return minPrice != null || maxPrice != null || minRating != null || minAmountOfVisitors != null
+    }
+}
 
 @Composable
-private fun rememberSearchFilterState(): MutableState<SearchFilterState> {
+fun rememberSearchFilterState(): MutableState<SearchFilterState> {
     return remember {
         mutableStateOf(SearchFilterState())
     }

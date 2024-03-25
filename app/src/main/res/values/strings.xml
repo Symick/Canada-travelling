@@ -30,4 +30,16 @@
     <string name="monthly_visitors">Monthly visitors: </string>
     <string name="find_your_activities">Find your activities</string>
     <string name="search_hint">Where to?</string>
+    <string name="search_for_city">Search for city</string>
+    <string name="empty_search">No places with the name %s found</string>
+    <string name="filter">Filter</string>
+    <string name="apply_filter">Apply filter</string>
+    <string name="clear_filter">Clear filter</string>
+    <string name="cancel">Cancel</string>
+    <string name="clear">Clear</string>
+    <string name="min_rating">Minimum rating</string>
+    <string name="price_range">Price range</string>
+    <string name="minimum_visitors">Minimum visitors</string>
+    <string name="min_price">Min price</string>
+    <string name="max_price">Max price</string>
 </resources>

@@ -35,7 +35,11 @@ class Utils {
             return DecimalFormat("#,###").format(number)
         }
 
-        fun formatLocalePrice(price: Double? = 0.0): String {
+        fun formatLocalePrice(price: Double): String {
+            return DecimalFormat("#,###.##").format(price)
+        }
+
+        fun formatLocalePrice(price: Float): String {
             return DecimalFormat("#,###.##").format(price)
         }
     }
