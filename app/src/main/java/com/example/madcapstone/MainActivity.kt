@@ -63,7 +63,7 @@ class MainActivity : ComponentActivity() {
 private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
     val authViewModel: AuthViewModel = viewModel()
     val activityViewModel: ActivityViewModel = viewModel()
-    NavHost(navController = nc, startDestination = Screens.HomeScreen.route) {
+    NavHost(navController = nc, startDestination = Screens.HomeScreen.route, modifier = modifier) {
         composable(Screens.HomeScreen.route) { HomeScreen() }
         composable(Screens.ExploreScreen.route) { ExploreScreen(activityViewModel) }
         composable(Screens.TripsListScreen.route) {

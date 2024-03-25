@@ -29,4 +29,5 @@
     <string name="your_score">Your score: </string>
     <string name="monthly_visitors">Monthly visitors: </string>
     <string name="find_your_activities">Find your activities</string>
+    <string name="search_hint">Where to?</string>
 </resources>
