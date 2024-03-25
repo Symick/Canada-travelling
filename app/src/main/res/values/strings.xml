@@ -28,4 +28,5 @@
     <string name="default_web_client_id" translatable="false">766743554565-4grblv6ml18l4lnig4dikc32upq1geu9.apps.googleusercontent.com</string>
     <string name="your_score">Your score: </string>
     <string name="monthly_visitors">Monthly visitors: </string>
+    <string name="find_your_activities">Find your activities</string>
 </resources>

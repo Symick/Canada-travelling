@@ -1,12 +1,10 @@
 package com.example.madcapstone.viewmodels
 
 import android.app.Application
-import android.content.Context
 import android.util.Patterns
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.madcapstone.data.util.Resource
 import com.example.madcapstone.repository.AuthRepository
@@ -16,7 +14,7 @@ import kotlinx.coroutines.launch
 class AuthViewModel(private val application: Application) : AndroidViewModel(application) {
     private val authRepository = AuthRepository()
 
-    private val _authState = MutableLiveData<Resource<Boolean>>(Resource.Empty())
+    private val _authState = MutableLiveData<Resource<Boolean>>(Resource.Initial())
     val authState: LiveData<Resource<Boolean>> get() = _authState
 
     fun isValidateEmail(email: String): Boolean {
@@ -106,6 +104,6 @@ class AuthViewModel(private val application: Application) : AndroidViewModel(app
     }
 
     fun resetState() {
-        _authState.value = Resource.Empty()
+        _authState.value = Resource.Initial()
     }
 }
