@@ -11,11 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.madcapstone.R
-import com.example.madcapstone.data.models.Activity
+import com.example.madcapstone.data.models.firebaseModels.FirestoreActivity
 import com.example.madcapstone.ui.components.ExploreActivityCard
-import com.example.madcapstone.ui.components.ReviewActivityCard
-import com.example.madcapstone.ui.components.SmallActivityCard
-import com.example.madcapstone.ui.components.TripActivityCard
 import com.example.madcapstone.ui.theme.customTopAppBarColor
 
 @Composable
@@ -33,9 +30,9 @@ fun HomeScreen() {
                 .padding(16.dp)
         ) {
             Text(text = "home Screen")
-            val activity = Activity(
-                name = "Banff Gondola Ride",
-                place = "Banff",
+            val activity = FirestoreActivity(
+                name = "Banff sunshine village ski resort",
+                Location = "Banff",
                 address = "100 Mountain Ave, Banff, AB T1L 1B2",
                 minPrice = 20.45,
                 maxPrice = 40.95,

@@ -34,41 +34,42 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.madcapstone.R
-import com.example.madcapstone.data.models.Activity
+import com.example.madcapstone.data.models.firebaseModels.FirestoreActivity
 import com.example.madcapstone.ui.components.utils.RatingBar
 import com.example.madcapstone.utils.Utils
 
 @Composable
 fun SmallActivityCard(
-    activity: Activity,
-    onClick: (Activity) -> Unit
+    activity: FirestoreActivity,
+    onClick: (FirestoreActivity) -> Unit
 ) {
     SmallActivityCard(activity, ActivityCardType.NORMAL, onClick = onClick)
 }
 
 @Composable
-fun ReviewActivityCard(activity: Activity, onClick: (Activity) -> Unit, onReview: (Activity, rating:Int) -> Unit ) {
+fun ReviewActivityCard(activity: FirestoreActivity, onClick: (FirestoreActivity) -> Unit, onReview: (FirestoreActivity, rating:Int) -> Unit ) {
     SmallActivityCard(activity, ActivityCardType.REVIEW, onClick = onClick, onReview = onReview)
 }
 
 @Composable
 fun ExploreActivityCard(
-    activity: Activity,
-    onClick: (Activity) -> Unit,
-    onHearted: (Activity) -> Unit
+    activity: FirestoreActivity,
+    onClick: (FirestoreActivity) -> Unit,
+    onHearted: (FirestoreActivity) -> Unit
 ) {
     LargeActivityCard(activity, ActivityCardType.SEARCH, onClick = onClick, onHearted = onHearted)
 }
 
 @Composable
 fun TripActivityCard(
-    activity: Activity,
-    onClick: (Activity) -> Unit,
-    onDelete: (Activity) -> Unit,
-    onEdit: (Activity) -> Unit
+    activity: FirestoreActivity,
+    onClick: (FirestoreActivity) -> Unit,
+    onDelete: (FirestoreActivity) -> Unit,
+    onEdit: (FirestoreActivity) -> Unit
 ) {
     LargeActivityCard(activity, ActivityCardType.TRIP, onClick = onClick, onDelete = onDelete, onEdit = onEdit)
 }
@@ -76,10 +77,10 @@ fun TripActivityCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SmallActivityCard(
-    activity: Activity,
+    activity: FirestoreActivity,
     type: ActivityCardType = ActivityCardType.NORMAL,
-    onClick: (Activity) -> Unit,
-    onReview: ((Activity, Int) -> Unit)? = null
+    onClick: (FirestoreActivity) -> Unit,
+    onReview: ((FirestoreActivity, Int) -> Unit)? = null
 ) {
     var reviewScore by remember { mutableIntStateOf(0) }
     var priceText = ""
@@ -119,7 +120,7 @@ private fun SmallActivityCard(
                         style = if (type == ActivityCardType.NORMAL) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleSmall,
                     )
                     Text(
-                        text = activity.place,
+                        text = activity.Location,
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
@@ -158,12 +159,12 @@ private fun SmallActivityCard(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LargeActivityCard(
-    activity: Activity,
+    activity: FirestoreActivity,
     type: ActivityCardType,
-    onClick: (Activity) -> Unit,
-    onDelete: ((Activity) -> Unit)? = null,
-    onEdit: ((Activity) -> Unit)? = null,
-    onHearted: ((Activity) -> Unit)? = null,
+    onClick: (FirestoreActivity) -> Unit,
+    onDelete: ((FirestoreActivity) -> Unit)? = null,
+    onEdit: ((FirestoreActivity) -> Unit)? = null,
+    onHearted: ((FirestoreActivity) -> Unit)? = null,
 ) {
     val iconButtonSize = 30.dp
     val iconSize = 20.dp
@@ -233,11 +234,14 @@ private fun LargeActivityCard(
 
                 Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween) {
                     Column {
-                        Row(verticalAlignment = Alignment.Bottom) {
+                        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
                             Text(
                                 text = activity.name,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
+                                maxLines = 2,
+                                modifier = Modifier.weight(0.8f),
+                                overflow = TextOverflow.Ellipsis
                             )
                             if (type == ActivityCardType.SEARCH) {
                                 var heartState by remember { mutableStateOf(false) }
@@ -247,7 +251,7 @@ private fun LargeActivityCard(
                                         heartState = !heartState
                                         onHearted!!(activity)
                                     },
-                                    modifier = Modifier.size(iconButtonSize)
+                                    modifier = Modifier.size(iconButtonSize).weight(0.2f)
                                 ) {
                                     Icon(
                                         if (heartState) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
@@ -259,7 +263,7 @@ private fun LargeActivityCard(
                             }
                         }
                         Text(
-                            text = activity.place,
+                            text = activity.Location,
                             style = MaterialTheme.typography.bodySmall
                         )
                     }
@@ -281,7 +285,7 @@ private fun LargeActivityCard(
     }
 }
 
-private fun getPriceText(activity: Activity): String {
+private fun getPriceText(activity: FirestoreActivity): String {
     return if (activity.isFree) "Free" else "€${Utils.formatLocalePrice(activity.minPrice!!)} - €${
         Utils.formatLocalePrice(
             activity.maxPrice!!

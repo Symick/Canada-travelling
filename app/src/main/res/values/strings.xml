@@ -42,4 +42,8 @@
     <string name="minimum_visitors">Minimum visitors</string>
     <string name="min_price">Min price</string>
     <string name="max_price">Max price</string>
+    <string name="no_activities_found">No activities found!</string>
+    <string name="opening_hours">Opening hours</string>
+    <string name="closed">Closed</string>
+    <string name="prices">Prices</string>
 </resources>

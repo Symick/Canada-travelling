@@ -3,6 +3,10 @@ package com.example.madcapstone
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -20,6 +24,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.madcapstone.ui.components.CanadaTripsBottomBar
 import com.example.madcapstone.ui.screens.AccountScreen
+import com.example.madcapstone.ui.screens.ActivityScreen
 import com.example.madcapstone.ui.screens.ExploreScreen
 import com.example.madcapstone.ui.screens.HomeScreen
 import com.example.madcapstone.ui.screens.Screens
@@ -28,6 +33,7 @@ import com.example.madcapstone.ui.screens.auth.SignUpScreen
 import com.example.madcapstone.ui.screens.trips.TripsDetailScreen
 import com.example.madcapstone.ui.screens.trips.TripsListScreen
 import com.example.madcapstone.ui.theme.MadCapstoneTheme
+import com.example.madcapstone.utils.NavigationAnimations
 import com.example.madcapstone.viewmodels.ActivityViewModel
 import com.example.madcapstone.viewmodels.AuthViewModel
 import com.google.firebase.Firebase
@@ -65,7 +71,21 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
     val activityViewModel: ActivityViewModel = viewModel()
     NavHost(navController = nc, startDestination = Screens.HomeScreen.route, modifier = modifier) {
         composable(Screens.HomeScreen.route) { HomeScreen() }
-        composable(Screens.ExploreScreen.route) { ExploreScreen(activityViewModel) }
+        composable(Screens.ExploreScreen.route) {
+            ExploreScreen(
+                activityViewModel,
+                navigateTo = { nc.navigate(Screens.ActivityDetailScreen.route) }
+            )
+        }
+        composable(
+            Screens.ActivityDetailScreen.route,
+            enterTransition = {NavigationAnimations.moveInFromRight()},
+            exitTransition = {NavigationAnimations.moveOutToRight()},
+            popEnterTransition = {NavigationAnimations.moveInFromRight()},
+            popExitTransition = {NavigationAnimations.moveOutToRight()}
+        ) {
+            ActivityScreen(viewModel = activityViewModel)
+        }
         composable(Screens.TripsListScreen.route) {
             if (Firebase.auth.currentUser != null) {
                 TripsListScreen(navigateTo = { nc.navigate(it) })
@@ -89,7 +109,8 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
             SignInScreen(
                 navigateUp = { nc.popBackStack() },
                 navigateTo = { nc.navigate(it) },
-                viewModel = authViewModel)
+                viewModel = authViewModel
+            )
         }
         composable(Screens.SignUpScreen.route) {
             SignUpScreen(

@@ -1,12 +1,15 @@
 package com.example.madcapstone.viewmodels
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.madcapstone.data.models.City
+import com.example.madcapstone.data.models.firebaseModels.City
+import com.example.madcapstone.data.models.firebaseModels.FirestoreActivity
 import com.example.madcapstone.data.util.Resource
 import com.example.madcapstone.repository.ActivityRepository
+import com.example.madcapstone.state.SearchFilterState
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -56,6 +59,33 @@ class ActivityViewModel : ViewModel() {
                 _cities.value = activityRepository.getPlaces(query.trim())
             }
         }
+    }
+
+    private val _selectedActivity = mutableStateOf(FirestoreActivity())
+    val selectedActivity: FirestoreActivity
+        get() = _selectedActivity.value
+
+    fun setSelectedActivity(activity: FirestoreActivity) {
+        _selectedActivity.value = activity
+    }
+
+    //firestore activities
+    private val _activities = MutableLiveData<Resource<List<FirestoreActivity>>>(Resource.Initial())
+    val activities: LiveData<Resource<List<FirestoreActivity>>>
+        get() = _activities
+
+    fun getActivities(cityName: String, filters: SearchFilterState) {
+        if (cityName.isBlank()) {
+            return
+        }
+        _activities.value = Resource.Loading()
+        viewModelScope.launch {
+            _activities.value = activityRepository.getActivities(cityName, filters)
+        }
+    }
+
+    fun resetActivities() {
+        _activities.value = Resource.Initial()
     }
 
 }

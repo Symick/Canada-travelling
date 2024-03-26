@@ -3,10 +3,13 @@ package com.example.madcapstone.utils
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.text.format.DateFormat
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.material3.SnackbarHostState
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class Utils {
 
@@ -41,6 +44,18 @@ class Utils {
 
         fun formatLocalePrice(price: Float): String {
             return DecimalFormat("#,###.##").format(price)
+        }
+
+        fun formatLocaleTime(time: String, context: Context) : String {
+            val inputFormatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val formattedTime = inputFormatter.parse(time)
+            return if (DateFormat.is24HourFormat(context)) {
+                val outputFormatter = SimpleDateFormat("HH:mm", Locale.getDefault())
+                outputFormatter.format(formattedTime!!)
+            } else {
+                val outputFormatter = SimpleDateFormat("hh:mm aa", Locale.getDefault())
+                outputFormatter.format(formattedTime!!)
+            }
         }
     }
 }

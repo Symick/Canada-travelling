@@ -45,10 +45,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.madcapstone.R
-import com.example.madcapstone.data.models.City
+import com.example.madcapstone.data.models.firebaseModels.City
+import com.example.madcapstone.data.models.firebaseModels.FirestoreActivity
 import com.example.madcapstone.data.util.Resource
 import com.example.madcapstone.state.SearchFilterState
 import com.example.madcapstone.state.rememberSearchFilterState
+import com.example.madcapstone.ui.components.ExploreActivityCard
 import com.example.madcapstone.ui.components.utils.CustomRangeSlider
 import com.example.madcapstone.ui.components.utils.RatingBar
 import com.example.madcapstone.ui.theme.customTopAppBarColor
@@ -56,7 +58,7 @@ import com.example.madcapstone.viewmodels.ActivityViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun ExploreScreen(viewModel: ActivityViewModel) {
+fun ExploreScreen(viewModel: ActivityViewModel, navigateTo: (String) -> Unit) {
     Scaffold(topBar = {
         CenterAlignedTopAppBar(
             title =
@@ -69,16 +71,22 @@ fun ExploreScreen(viewModel: ActivityViewModel) {
             colors = customTopAppBarColor()
         )
     }) {
-        ScreenContent(modifier = Modifier.padding(it), viewModel)
+        ScreenContent(modifier = Modifier.padding(it), viewModel, navigateTo = navigateTo)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ScreenContent(modifier: Modifier, viewModel: ActivityViewModel) {
+private fun ScreenContent(
+    modifier: Modifier,
+    viewModel: ActivityViewModel,
+    navigateTo: (String) -> Unit
+) {
+    val searchQuery by viewModel.searchQuery.collectAsState()
     var searchActive by remember { mutableStateOf(false) }
     var filterDialogVisible by remember { mutableStateOf(false) }
     var filterState by rememberSearchFilterState()
+
 
     if (filterDialogVisible) {
         FilterDialog(
@@ -86,6 +94,7 @@ private fun ScreenContent(modifier: Modifier, viewModel: ActivityViewModel) {
             onConfirm = {
                 filterState = it
                 filterDialogVisible = false
+                viewModel.getActivities(searchQuery, filterState)
             },
             filterState = filterState
         )
@@ -100,15 +109,19 @@ private fun ScreenContent(modifier: Modifier, viewModel: ActivityViewModel) {
         Text(
             stringResource(R.string.find_your_activities),
             style = MaterialTheme.typography.headlineMedium,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
         )
-        val searchQuery by viewModel.searchQuery.collectAsState()
+
+        Spacer(modifier = Modifier.height(8.dp))
         val cities by viewModel.cities.observeAsState(initial = Resource.Initial())
 
         DockedSearchBar(
             query = searchQuery,
             onQueryChange = viewModel::onQueryChange,
-            onSearch = { searchActive = false },
+            onSearch = {
+                searchActive = false
+            },
             active = searchActive,
             onActiveChange = { searchActive = it },
             leadingIcon = {
@@ -128,6 +141,7 @@ private fun ScreenContent(modifier: Modifier, viewModel: ActivityViewModel) {
                     IconButton(onClick = {
                         if (searchQuery.isNotEmpty()) {
                             viewModel.onQueryChange("")
+                            viewModel.resetActivities()
                         } else {
                             searchActive = false
                         }
@@ -140,8 +154,19 @@ private fun ScreenContent(modifier: Modifier, viewModel: ActivityViewModel) {
         ) {
             SearchMenuList(cities, onClick = {
                 viewModel.onQueryChange(it)
+                viewModel.getActivities(it, filterState)
                 searchActive = false
             }, searchQuery)
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        val activities by viewModel.activities.observeAsState(initial = Resource.Initial())
+        if (!searchActive && activities !is Resource.Initial) {
+            ActivityList(activities, onClick = {
+                viewModel.setSelectedActivity(it)
+                navigateTo(Screens.ActivityDetailScreen.route)
+            }, onHearted = {})
         }
     }
 }
@@ -187,7 +212,6 @@ private fun SearchMenuList(
                 Text(stringResource(R.string.empty_search, query))
             }
         }
-
     }
 }
 
@@ -210,15 +234,20 @@ private fun FilterDialog(
     }
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        title = { Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.filter))
-            TextButton(onClick = {
-                localFilterState.value = SearchFilterState()
-                range = 0f..0f
-            }) {
-                Text(stringResource(R.string.clear))
+        title = {
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(stringResource(R.string.filter))
+                TextButton(onClick = {
+                    localFilterState.value = SearchFilterState()
+                    range = 0f..0f
+                }) {
+                    Text(stringResource(R.string.clear))
+                }
             }
-        } },
+        },
         text = {
             FilterForm(localFilterState, range) {
                 range = it
@@ -240,7 +269,11 @@ private fun FilterDialog(
 }
 
 @Composable
-private fun FilterForm(filterState: MutableState<SearchFilterState>, range: ClosedFloatingPointRange<Float>, onRangeChange: (ClosedFloatingPointRange<Float>) -> Unit){
+private fun FilterForm(
+    filterState: MutableState<SearchFilterState>,
+    range: ClosedFloatingPointRange<Float>,
+    onRangeChange: (ClosedFloatingPointRange<Float>) -> Unit
+) {
     Column {
         Text(stringResource(R.string.price_range), style = MaterialTheme.typography.titleMedium)
         CustomRangeSlider(
@@ -248,7 +281,10 @@ private fun FilterForm(filterState: MutableState<SearchFilterState>, range: Clos
             onValueChange = onRangeChange,
             onValueChangeFinished = {
                 filterState.value =
-                    filterState.value.copy(minPrice = range.start, maxPrice = range.endInclusive)
+                    filterState.value.copy(
+                        minPrice = range.start,
+                        maxPrice = range.endInclusive
+                    )
             }
         )
         Spacer(modifier = Modifier.height(16.dp))
@@ -264,11 +300,50 @@ private fun FilterForm(filterState: MutableState<SearchFilterState>, range: Clos
         OutlinedTextField(
             value = filterState.value.minAmountOfVisitors?.toString() ?: "",
             onValueChange = {
-                filterState.value = filterState.value.copy(minAmountOfVisitors = it.toIntOrNull())
+                filterState.value =
+                    filterState.value.copy(minAmountOfVisitors = it.toIntOrNull())
             },
             label = { Text(stringResource(R.string.minimum_visitors)) },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
         )
+    }
+}
 
+@Composable
+fun ActivityList(
+    activityList: Resource<List<FirestoreActivity>>,
+    onClick: (FirestoreActivity) -> Unit,
+    onHearted: (FirestoreActivity) -> Unit
+) {
+    LazyColumn {
+        if (activityList is Resource.Success) {
+            items(activityList.data!!) { activity ->
+                ExploreActivityCard(activity = activity, onClick = onClick, onHearted = onHearted)
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
+        if (activityList is Resource.Loading) {
+            item {
+                CircularProgressIndicator()
+            }
+        }
+
+        if (activityList is Resource.Empty) {
+            item {
+                Text(stringResource(R.string.no_activities_found))
+            }
+        }
+
+        if (activityList is Resource.Error) {
+            item {
+                Text(activityList.message!!)
+            }
+        }
+
+        if (activityList is Resource.Initial) {
+            item {
+                Text("Initial State")
+            }
+        }
     }
 }
