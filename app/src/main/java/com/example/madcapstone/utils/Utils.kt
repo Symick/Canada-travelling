@@ -9,6 +9,8 @@ import androidx.annotation.StringRes
 import androidx.compose.material3.SnackbarHostState
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 
 class Utils {
@@ -56,6 +58,19 @@ class Utils {
                 val outputFormatter = SimpleDateFormat("hh:mm aa", Locale.getDefault())
                 outputFormatter.format(formattedTime!!)
             }
+        }
+        fun formatLocaleDate(date: Date?, nullDisplay: String) : String {
+            if (date == null) {
+                return nullDisplay
+            }
+            val outputFormatter = SimpleDateFormat("dd MMMM", Locale.getDefault())
+            return outputFormatter.format(date)
+        }
+        fun formatLocaleDate(timeInMillis: Long) : String {
+            val calender = Calendar.getInstance()
+            calender.timeInMillis = timeInMillis
+            val outputFormatter = SimpleDateFormat("dd MMMM", Locale.getDefault())
+            return outputFormatter.format(calender.timeInMillis)
         }
     }
 }

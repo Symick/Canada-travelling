@@ -1,8 +1,10 @@
 package com.example.madcapstone.data.models.firebaseModels
 
+import com.google.firebase.firestore.DocumentId
+
 //TODO add more fields for activity detail
 data class FirestoreActivity(
-    val id: String = "",
+    @DocumentId  val id: String = "",
     val name: String = "",
     val description: String = "",
     val imageUrl: String = "",

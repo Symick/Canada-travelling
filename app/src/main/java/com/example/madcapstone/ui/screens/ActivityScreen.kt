@@ -48,14 +48,14 @@ import com.example.madcapstone.viewmodels.ActivityViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun ActivityScreen(viewModel: ActivityViewModel) {
+fun ActivityScreen(viewModel: ActivityViewModel, navigateUp: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { },
                 colors = customTopAppBarColor(),
                 navigationIcon = {
-                    IconButton(onClick = { }) {
+                    IconButton(onClick = { navigateUp() }) {
                         Icon(
                             Icons.Filled.KeyboardArrowLeft,
                             contentDescription = "Back",
@@ -96,7 +96,7 @@ fun ActivityScreen(viewModel: ActivityViewModel) {
 private fun ScreenContent(modifier: Modifier, viewModel: ActivityViewModel) {
     val activity = viewModel.selectedActivity
     val openingHours = viewModel.selectedActivity.openingHours
-    Column {
+    Column(modifier = modifier) {
         AsyncImage(
             model = activity.imageUrl,
             contentDescription = activity.name,
@@ -105,7 +105,10 @@ private fun ScreenContent(modifier: Modifier, viewModel: ActivityViewModel) {
                 .fillMaxWidth()
                 .height(200.dp)
         )
-        Column(modifier = Modifier.padding(16.dp).verticalScroll(rememberScrollState())) {
+        
+        Column(modifier = Modifier
+            .padding(16.dp)
+            .verticalScroll(rememberScrollState())) {
             Text(text = activity.name, style = MaterialTheme.typography.headlineMedium)
             Row {
                 Icon(
@@ -119,6 +122,8 @@ private fun ScreenContent(modifier: Modifier, viewModel: ActivityViewModel) {
                     textDecoration = TextDecoration.Underline
                 )
             }
+            
+            Text(text = activity.id)
 
             Spacer(modifier = Modifier.height(16.dp))
             RatingBar(rating = activity.rating, reviewers = activity.amountOfReviews)
@@ -143,7 +148,6 @@ private fun DisplayOpeningHours(openingHours: Map<String, OpeningHours>) {
     // TODO make a dropdown menu for each day of the week
     var isExpanded by remember { mutableStateOf(false) }
     val valueText = stringResource(id = R.string.opening_hours)
-    val context = LocalContext.current
     ExposedDropdownMenuBox(expanded = isExpanded, onExpandedChange = { isExpanded = !isExpanded }) {
         OutlinedTextField(
             value = valueText,
@@ -154,17 +158,13 @@ private fun DisplayOpeningHours(openingHours: Map<String, OpeningHours>) {
             colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
             )
         ExposedDropdownMenu(expanded = isExpanded, onDismissRequest = { isExpanded = false}) {
-            openingHours.forEach { (day, hours) ->
-                Row(modifier = Modifier.fillMaxWidth().padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween){
-                    Text(text = day)
-                    if (hours.isClosed) {
-                        Text(text = stringResource(id = R.string.closed))
-                    } else {
-                        Text(
-                            text = "${Utils.formatLocaleTime(hours.openingTime, context)} - ${Utils.formatLocaleTime(hours.closingTime, context)}")
-                    }
-                }
-            }
+            DisplayOpeningDay(day = DayOfWeek.MONDAY, hours = openingHours[DayOfWeek.MONDAY.day]!!)
+            DisplayOpeningDay(day = DayOfWeek.TUESDAY, hours = openingHours[DayOfWeek.TUESDAY.day]!!)
+            DisplayOpeningDay(day = DayOfWeek.WEDNESDAY, hours = openingHours[DayOfWeek.WEDNESDAY.day]!!)
+            DisplayOpeningDay(day = DayOfWeek.THURSDAY, hours = openingHours[DayOfWeek.THURSDAY.day]!!)
+            DisplayOpeningDay(day = DayOfWeek.FRIDAY, hours = openingHours[DayOfWeek.FRIDAY.day]!!)
+            DisplayOpeningDay(day = DayOfWeek.SATURDAY, hours = openingHours[DayOfWeek.SATURDAY.day]!!)
+            DisplayOpeningDay(day = DayOfWeek.SUNDAY, hours = openingHours[DayOfWeek.SUNDAY.day]!!)
 
         }
     }
@@ -176,4 +176,30 @@ private fun getPriceText(activity: FirestoreActivity): String {
             activity.maxPrice!!
         )
     }"
+}
+
+@Composable
+private fun DisplayOpeningDay(day: DayOfWeek, hours: OpeningHours) {
+    val context = LocalContext.current
+    Row(modifier = Modifier
+        .fillMaxWidth()
+        .padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween){
+        Text(text = day.day)
+        if (hours.isClosed) {
+            Text(text = stringResource(id = R.string.closed))
+        } else {
+            Text(
+                text = "${Utils.formatLocaleTime(hours.openingTime, context)} - ${Utils.formatLocaleTime(hours.closingTime, context)}")
+        }
+    }
+}
+
+private enum class DayOfWeek(val day: String) {
+    MONDAY("Monday"),
+    TUESDAY("Tuesday"),
+    WEDNESDAY("Wednesday"),
+    THURSDAY("Thursday"),
+    FRIDAY("Friday"),
+    SATURDAY("Saturday"),
+    SUNDAY("Sunday")
 }

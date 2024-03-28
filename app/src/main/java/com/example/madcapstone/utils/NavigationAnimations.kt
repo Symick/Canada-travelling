@@ -13,12 +13,14 @@ class NavigationAnimations {
 
         fun moveInFromRight(): EnterTransition {
             return slideInHorizontally(
+                initialOffsetX = { it },
                 animationSpec = tween(NAVIGATION_ANIMATION_DURATION, easing = LinearOutSlowInEasing)
             )
         }
 
         fun moveOutToRight(): ExitTransition {
             return slideOutHorizontally(
+                targetOffsetX = { it },
                 animationSpec = tween(NAVIGATION_ANIMATION_DURATION, easing = LinearOutSlowInEasing)
             )
         }

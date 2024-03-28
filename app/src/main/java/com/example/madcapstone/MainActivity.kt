@@ -36,6 +36,7 @@ import com.example.madcapstone.ui.theme.MadCapstoneTheme
 import com.example.madcapstone.utils.NavigationAnimations
 import com.example.madcapstone.viewmodels.ActivityViewModel
 import com.example.madcapstone.viewmodels.AuthViewModel
+import com.example.madcapstone.viewmodels.TripViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
@@ -69,6 +70,7 @@ class MainActivity : ComponentActivity() {
 private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
     val authViewModel: AuthViewModel = viewModel()
     val activityViewModel: ActivityViewModel = viewModel()
+    val tripViewModel: TripViewModel = viewModel()
     NavHost(navController = nc, startDestination = Screens.HomeScreen.route, modifier = modifier) {
         composable(Screens.HomeScreen.route) { HomeScreen() }
         composable(Screens.ExploreScreen.route) {
@@ -84,11 +86,11 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
             popEnterTransition = {NavigationAnimations.moveInFromRight()},
             popExitTransition = {NavigationAnimations.moveOutToRight()}
         ) {
-            ActivityScreen(viewModel = activityViewModel)
+            ActivityScreen(viewModel = activityViewModel, navigateUp = { nc.popBackStack() })
         }
         composable(Screens.TripsListScreen.route) {
             if (Firebase.auth.currentUser != null) {
-                TripsListScreen(navigateTo = { nc.navigate(it) })
+                TripsListScreen(navigateTo = { nc.navigate(it) }, viewModel = tripViewModel)
             } else {
                 nc.navigate(Screens.SignInScreen.route) {
                     popUpTo(Screens.HomeScreen.route)

@@ -46,4 +46,12 @@
     <string name="opening_hours">Opening hours</string>
     <string name="closed">Closed</string>
     <string name="prices">Prices</string>
+    <string name="trips">Trips</string>
+    <string name="no_trips">No trips yet! \n Get started by creating new trips</string>
+    <string name="create_trip">Create trip</string>
+    <string name="trip_name_label">Trip name\n</string>
+    <string name="travel_date_label">Travel Dates</string>
+    <string name="start_date">Start Date</string>
+    <string name="save">Save\n</string>
+    <string name="end_date">End date</string>
 </resources>
