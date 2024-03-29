@@ -4,9 +4,10 @@ import android.content.Context
 import com.example.madcapstone.data.database.PlanningDatabase
 import com.example.madcapstone.data.database.dao.TripDao
 import com.example.madcapstone.data.models.roomModels.Trip
+import com.google.firebase.Firebase
+import com.google.firebase.storage.storage
 
 class TripRepository(context: Context) {
-
     private val tripDao: TripDao
 
     init {

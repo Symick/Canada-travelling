@@ -66,6 +66,10 @@ class Utils {
             val outputFormatter = SimpleDateFormat("dd MMMM", Locale.getDefault())
             return outputFormatter.format(date)
         }
+
+        fun formatLocaleDate(date: Date) : String {
+            return formatLocaleDate(date, "")
+        }
         fun formatLocaleDate(timeInMillis: Long) : String {
             val calender = Calendar.getInstance()
             calender.timeInMillis = timeInMillis

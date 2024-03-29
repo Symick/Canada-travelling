@@ -1,6 +1,7 @@
 package com.example.madcapstone.viewmodels
 
 import android.app.Application
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.madcapstone.data.models.roomModels.Trip
@@ -12,6 +13,13 @@ class TripViewModel(application: Application): AndroidViewModel(application) {
 
     val trips = tripRepository.getTrips()
 
+    private val _selectedTrip = mutableStateOf<Trip?>(null)
+    val selectedTrip: Trip?
+        get() = _selectedTrip.value
+
+    fun selectTrip(trip: Trip) {
+        _selectedTrip.value = trip
+    }
 
     fun insertTrip(trip: Trip) {
         viewModelScope.launch {

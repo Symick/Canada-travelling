@@ -16,23 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.madcapstone.R
+import com.example.madcapstone.ui.components.BackNavigationTopBar
 import com.example.madcapstone.ui.theme.customTopAppBarColor
+import com.example.madcapstone.viewmodels.TripViewModel
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
-fun TripsDetailScreen(navigateUp: () -> Unit) {
+fun TripsDetailScreen(navigateUp: () -> Unit, tripViewModel: TripViewModel) {
     Scaffold(topBar = {
-        CenterAlignedTopAppBar(title = { Text(stringResource(R.string.screen_label_trips)) },
-            colors = customTopAppBarColor(),
-            navigationIcon = {
-                IconButton(onClick = { navigateUp() }) {
-                    Icon(
-                        Icons.Default.KeyboardArrowLeft, "Go To Previous Screen",
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-            }
-        )
+        BackNavigationTopBar(navigateUp)
     }) {
         Column(Modifier.padding(it)) {
             Text(text = "trips Detail")

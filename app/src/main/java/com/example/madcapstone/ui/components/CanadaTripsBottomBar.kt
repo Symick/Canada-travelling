@@ -23,10 +23,7 @@ import com.example.madcapstone.ui.screens.Screens
 
 @Composable
 fun CanadaTripsBottomBar(navController: NavHostController) {
-    NavigationBar(
-        containerColor = MaterialTheme.colorScheme.primary,
-        contentColor = MaterialTheme.colorScheme.onPrimary,
-    ) {
+    NavigationBar {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry?.destination
         val screens = listOf(
@@ -68,13 +65,6 @@ fun CanadaTripsBottomBar(navController: NavHostController) {
                 label = {
                     Text(stringResource(screen.stringDisplayId!!))
                 },
-                colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.inversePrimary,
-                    unselectedIconColor = MaterialTheme.colorScheme.onPrimary,
-                    selectedTextColor = MaterialTheme.colorScheme.inversePrimary,
-                    unselectedTextColor = MaterialTheme.colorScheme.onPrimary,
-                    indicatorColor = MaterialTheme.colorScheme.primary
-                )
             )
         }
     }

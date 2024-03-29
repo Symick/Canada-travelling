@@ -42,13 +42,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.madcapstone.R
+import com.example.madcapstone.data.models.roomModels.Trip
 import com.example.madcapstone.utils.Utils
 import java.util.Date
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TripsBottomSheet(onDismissRequest: () -> Unit) {
+fun TripsBottomSheet(onDismissRequest: () -> Unit, createTrip: (Trip) -> Unit) {
     val sheetState = rememberModalBottomSheetState()
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -64,6 +65,7 @@ fun TripsBottomSheet(onDismissRequest: () -> Unit) {
             Spacer(modifier = Modifier.height(8.dp))
 
             var tripName by remember { mutableStateOf("") }
+            var tripError by remember { mutableStateOf(false) }
             OutlinedTextField(
                 value = tripName,
                 onValueChange = { tripName = it },
@@ -75,12 +77,14 @@ fun TripsBottomSheet(onDismissRequest: () -> Unit) {
                         contentDescription = "suitcase"
                     )
                 },
-                singleLine = true
+                singleLine = true,
+                isError = tripError,
             )
 
             var showDatePickerDialog by remember { mutableStateOf(false) }
             var startDate by remember { mutableStateOf<Date?>(null) }
             var endDate by remember { mutableStateOf<Date?>(null) }
+            var dateError by remember { mutableStateOf(false) }
             val context = LocalContext.current
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -105,9 +109,9 @@ fun TripsBottomSheet(onDismissRequest: () -> Unit) {
                     .fillMaxWidth()
                     .clickable { showDatePickerDialog = true },
                 colors = OutlinedTextFieldDefaults.colors(
-                    disabledBorderColor = MaterialTheme.colorScheme.onBackground,
-                    disabledTextColor = MaterialTheme.colorScheme.onBackground,
-                    disabledTrailingIconColor = MaterialTheme.colorScheme.onBackground
+                    disabledBorderColor = if (dateError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                    disabledTextColor = if (dateError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+                    disabledTrailingIconColor = if (dateError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 )
 
@@ -118,7 +122,29 @@ fun TripsBottomSheet(onDismissRequest: () -> Unit) {
             Spacer(modifier = Modifier.height(16.dp))
 
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                Button(onClick = { }) {
+                Button(onClick = {
+                    if (tripName.isEmpty()) {
+                        tripError = true
+                        Utils.showToast(context, R.string.trip_name_error)
+                        return@Button
+                    } else {
+                        tripError = false
+                    }
+                    if (startDate == null || endDate == null) {
+                        dateError = true
+                        Utils.showToast(context, R.string.date_error)
+                        return@Button
+                    } else {
+                        dateError = false
+                    }
+                    createTrip(
+                        Trip(
+                            title = tripName,
+                            startDate = startDate!!,
+                            endDate = endDate!!
+                        )
+                    )
+                }) {
                     Text(stringResource(R.string.create_trip))
                 }
             }

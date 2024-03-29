@@ -6,6 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.example.madcapstone.data.models.roomModels.Trip
 
 @Dao
@@ -19,4 +20,5 @@ interface TripDao {
 
     @Delete
     suspend fun deleteTrip(trip: Trip)
+
 }
