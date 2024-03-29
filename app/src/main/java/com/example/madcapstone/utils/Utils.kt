@@ -63,18 +63,12 @@ class Utils {
             if (date == null) {
                 return nullDisplay
             }
-            val outputFormatter = SimpleDateFormat("dd MMMM", Locale.getDefault())
+            val outputFormatter = SimpleDateFormat("dd MMM", Locale.getDefault())
             return outputFormatter.format(date)
         }
 
         fun formatLocaleDate(date: Date) : String {
             return formatLocaleDate(date, "")
-        }
-        fun formatLocaleDate(timeInMillis: Long) : String {
-            val calender = Calendar.getInstance()
-            calender.timeInMillis = timeInMillis
-            val outputFormatter = SimpleDateFormat("dd MMMM", Locale.getDefault())
-            return outputFormatter.format(calender.timeInMillis)
         }
     }
 }

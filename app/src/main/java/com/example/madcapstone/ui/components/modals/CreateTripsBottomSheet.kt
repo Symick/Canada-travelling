@@ -58,7 +58,9 @@ fun TripsBottomSheet(onDismissRequest: () -> Unit, createTrip: (Trip) -> Unit) {
     ) {
         Column(
             Modifier
-                .fillMaxWidth().padding(16.dp).padding(bottom = 32.dp), horizontalAlignment = Alignment.CenterHorizontally
+                .fillMaxWidth()
+                .padding(16.dp)
+                .padding(bottom = 32.dp), horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(stringResource(R.string.create_trip), style = MaterialTheme.typography.titleLarge)
 
@@ -113,7 +115,7 @@ fun TripsBottomSheet(onDismissRequest: () -> Unit, createTrip: (Trip) -> Unit) {
                     disabledTextColor = if (dateError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
                     disabledTrailingIconColor = if (dateError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                )
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -150,6 +152,12 @@ fun TripsBottomSheet(onDismissRequest: () -> Unit, createTrip: (Trip) -> Unit) {
             }
 
 
+            val weekInMillis = 604800000
+            val dateRangeState = rememberDateRangePickerState(
+                initialSelectedStartDateMillis = System.currentTimeMillis(),
+                initialSelectedEndDateMillis = System.currentTimeMillis()
+                    .plus(weekInMillis),
+            )
             if (showDatePickerDialog) {
                 Dialog(
                     onDismissRequest = { showDatePickerDialog = false },
@@ -160,12 +168,6 @@ fun TripsBottomSheet(onDismissRequest: () -> Unit, createTrip: (Trip) -> Unit) {
                             .fillMaxSize()
                             .weight(1f)
                     ) {
-                        val weekInMillis = 604800000
-                        val dateRangeState = rememberDateRangePickerState(
-                            initialSelectedStartDateMillis = System.currentTimeMillis(),
-                            initialSelectedEndDateMillis = System.currentTimeMillis()
-                                .plus(weekInMillis),
-                        )
                         DateRangePicker(
                             state = dateRangeState,
                             dateValidator = { date ->

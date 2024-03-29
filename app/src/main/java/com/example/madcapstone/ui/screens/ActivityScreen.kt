@@ -41,14 +41,18 @@ import coil.compose.AsyncImage
 import com.example.madcapstone.R
 import com.example.madcapstone.data.models.firebaseModels.FirestoreActivity
 import com.example.madcapstone.data.models.firebaseModels.OpeningHours
+import com.example.madcapstone.ui.components.modals.AddActivityBottomSheet
 import com.example.madcapstone.ui.components.utils.RatingBar
 import com.example.madcapstone.ui.theme.customTopAppBarColor
 import com.example.madcapstone.utils.Utils
 import com.example.madcapstone.viewmodels.ActivityViewModel
+import com.example.madcapstone.viewmodels.TripViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun ActivityScreen(viewModel: ActivityViewModel, navigateUp: () -> Unit) {
+fun ActivityScreen(tripViewModel: TripViewModel, viewModel: ActivityViewModel, navigateUp: () -> Unit) {
+    var showAddActivityModel by remember { mutableStateOf(false) }
+    val activity = viewModel.selectedActivity
     Scaffold(
         topBar = {
             TopAppBar(
@@ -75,7 +79,7 @@ fun ActivityScreen(viewModel: ActivityViewModel, navigateUp: () -> Unit) {
                     var hearted by remember { mutableStateOf(false) }
                     IconButton(onClick = {
                         hearted = !hearted
-                        /*TODO*/
+                        showAddActivityModel = true
                     }) {
                         Icon(
                             if (hearted) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
@@ -88,14 +92,17 @@ fun ActivityScreen(viewModel: ActivityViewModel, navigateUp: () -> Unit) {
         }
     )
     {
-        ScreenContent(modifier = Modifier.padding(it), viewModel = viewModel)
+        ScreenContent(modifier = Modifier.padding(it), activity)
+        if (showAddActivityModel) {
+            AddActivityBottomSheet(onDismissRequest = { showAddActivityModel = false }, tripViewModel = tripViewModel, activity)
+        }
     }
 }
 
 @Composable
-private fun ScreenContent(modifier: Modifier, viewModel: ActivityViewModel) {
-    val activity = viewModel.selectedActivity
-    val openingHours = viewModel.selectedActivity.openingHours
+private fun ScreenContent(modifier: Modifier, activity: FirestoreActivity) {
+
+    val openingHours = activity.openingHours
     Column(modifier = modifier) {
         AsyncImage(
             model = activity.imageUrl,
@@ -122,8 +129,7 @@ private fun ScreenContent(modifier: Modifier, viewModel: ActivityViewModel) {
                     textDecoration = TextDecoration.Underline
                 )
             }
-            
-            Text(text = activity.id)
+
 
             Spacer(modifier = Modifier.height(16.dp))
             RatingBar(rating = activity.rating, reviewers = activity.amountOfReviews)
@@ -165,15 +171,14 @@ private fun DisplayOpeningHours(openingHours: Map<String, OpeningHours>) {
             DisplayOpeningDay(day = DayOfWeek.FRIDAY, hours = openingHours[DayOfWeek.FRIDAY.day]!!)
             DisplayOpeningDay(day = DayOfWeek.SATURDAY, hours = openingHours[DayOfWeek.SATURDAY.day]!!)
             DisplayOpeningDay(day = DayOfWeek.SUNDAY, hours = openingHours[DayOfWeek.SUNDAY.day]!!)
-
         }
     }
 }
 
 private fun getPriceText(activity: FirestoreActivity): String {
-    return if (activity.isFree) "Free" else "€${Utils.formatLocalePrice(activity.minPrice!!)} - €${
+    return if (activity.isFree) "Free" else "€${Utils.formatLocalePrice(activity.minPrice)} - €${
         Utils.formatLocalePrice(
-            activity.maxPrice!!
+            activity.maxPrice
         )
     }"
 }

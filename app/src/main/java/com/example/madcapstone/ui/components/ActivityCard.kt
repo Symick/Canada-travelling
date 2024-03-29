@@ -286,9 +286,9 @@ private fun LargeActivityCard(
 }
 
 private fun getPriceText(activity: FirestoreActivity): String {
-    return if (activity.isFree) "Free" else "€${Utils.formatLocalePrice(activity.minPrice!!)} - €${
+    return if (activity.isFree) "Free" else "€${Utils.formatLocalePrice(activity.minPrice)} - €${
         Utils.formatLocalePrice(
-            activity.maxPrice!!
+            activity.maxPrice
         )
     }"
 }

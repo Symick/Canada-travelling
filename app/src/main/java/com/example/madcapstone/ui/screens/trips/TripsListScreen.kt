@@ -1,6 +1,5 @@
 package com.example.madcapstone.ui.screens.trips
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -55,12 +54,20 @@ fun TripsListScreen(navigateTo: (String) -> Unit, viewModel: TripViewModel) {
             colors = customTopAppBarColor()
         )
     }) {
-        ScreenContent(modifier = Modifier.padding(it), viewModel = viewModel, navigateTo = navigateTo)
+        ScreenContent(
+            modifier = Modifier.padding(it),
+            viewModel = viewModel,
+            navigateTo = navigateTo
+        )
     }
 }
 
 @Composable
-private fun ScreenContent(modifier: Modifier, viewModel: TripViewModel, navigateTo: (String) -> Unit) {
+private fun ScreenContent(
+    modifier: Modifier,
+    viewModel: TripViewModel,
+    navigateTo: (String) -> Unit
+) {
     val trips by viewModel.trips.observeAsState()
     Column(
         modifier = modifier
@@ -78,14 +85,14 @@ private fun ScreenContent(modifier: Modifier, viewModel: TripViewModel, navigate
             var tripToDelete: Trip? by remember { mutableStateOf(null) }
             DisplayTrips(modifier = Modifier.weight(1f), trips = trips!!,
                 onTripDelete = {
-                tripToDelete = it
-                deleteModalVisible = true
-            },
+                    tripToDelete = it
+                    deleteModalVisible = true
+                },
                 onTripSelect = {
                     viewModel.selectTrip(it)
                     navigateTo(Screens.TripsDetailScreen.route)
                 }
-                )
+            )
             if (deleteModalVisible) {
                 SimpleDialog(
                     onDismissRequest = { deleteModalVisible = false },
@@ -116,10 +123,15 @@ private fun ScreenContent(modifier: Modifier, viewModel: TripViewModel, navigate
 }
 
 @Composable
-private fun DisplayTrips(modifier: Modifier, trips: List<Trip>, onTripDelete: (Trip) -> Unit, onTripSelect: (Trip) -> Unit) {
+private fun DisplayTrips(
+    modifier: Modifier,
+    trips: List<Trip>,
+    onTripDelete: (Trip) -> Unit,
+    onTripSelect: (Trip) -> Unit
+) {
     LazyColumn(modifier = modifier) {
         items(items = trips) {
-            TripItem(trip = it, onDelete = { onTripDelete(it) }, onSelect = { onTripSelect(it)})
+            TripItem(trip = it, onDelete = { onTripDelete(it) }, onSelect = { onTripSelect(it) })
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
@@ -132,25 +144,16 @@ private fun TripItem(trip: Trip, onDelete: () -> Unit, onSelect: () -> Unit) {
             .fillMaxWidth()
             .clickable { onSelect() }) {
         Box(contentAlignment = Alignment.TopEnd) {
-            if (trip.imageUrl != null) {
-                AsyncImage(
-                    model = trip.imageUrl,
-                    contentDescription = "Trip image",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(16f / 9f)
-                )
-            } else {
-                Image(
-                    painterResource(R.drawable.canada_flag),
-                    contentDescription = "Trip image",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(16f / 9f),
-                    contentScale = ContentScale.Crop,
-                )
-            }
+            AsyncImage(
+                model = trip.imageUrl,
+                contentDescription = "Trip image",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16f / 9f),
+                fallback = painterResource(id = R.drawable.canada_flag)
+            )
+
             FilledIconButton(
                 onClick = onDelete,
                 colors = IconButtonDefaults.filledIconButtonColors(

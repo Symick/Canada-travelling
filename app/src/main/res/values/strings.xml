@@ -52,11 +52,14 @@
     <string name="trip_name_label">Trip name\n</string>
     <string name="travel_date_label">Travel Dates</string>
     <string name="start_date">Start Date</string>
-    <string name="save">Save\n</string>
+    <string name="save">Save</string>
     <string name="end_date">End date</string>
     <string name="trip_name_error">A trip should have a name</string>
     <string name="date_error">A trip should have an start and an end date</string>
     <string name="delete">Delete</string>
     <string name="delete_trip">Delete Trip</string>
     <string name="delete_trip_message">Are you sure you want to delete %s?</string>
+    <string name="add_activity">Add activity</string>
+    <string name="edit_activity">Edit activity</string>
+    <string name="select_trip">Select trip</string>
 </resources>

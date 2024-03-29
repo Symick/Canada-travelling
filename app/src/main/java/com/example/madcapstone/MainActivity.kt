@@ -42,7 +42,7 @@ import com.google.firebase.auth.auth
 
 class MainActivity : ComponentActivity() {
 
-    @OptIn(ExperimentalMaterial3Api::class)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -86,7 +86,7 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
             popEnterTransition = {NavigationAnimations.moveInFromRight()},
             popExitTransition = {NavigationAnimations.moveOutToRight()}
         ) {
-            ActivityScreen(viewModel = activityViewModel, navigateUp = { nc.popBackStack() })
+            ActivityScreen(viewModel = activityViewModel, navigateUp = { nc.popBackStack() }, tripViewModel = tripViewModel)
         }
         composable(Screens.TripsListScreen.route) {
             if (Firebase.auth.currentUser != null) {
@@ -106,7 +106,7 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
                 }
             }
         }
-        composable(Screens.TripsDetailScreen.route) { TripsDetailScreen(navigateUp = { nc.popBackStack() }) }
+        composable(Screens.TripsDetailScreen.route) { TripsDetailScreen(navigateUp = { nc.popBackStack() }, tripViewModel) }
         composable(Screens.SignInScreen.route) {
             SignInScreen(
                 navigateUp = { nc.popBackStack() },
