@@ -35,5 +35,5 @@ class TripRepository(context: Context) {
         tripActivityDao.insertTripActivity(TripActivity(trip.tripId, activity.activityId, date))
     }
 
-    fun getTripActivities(tripId: String) = tripDao.getTripActivities(tripId)
+    fun getTripActivities(tripId: String, date: Date) = tripDao.getTripActivities(tripId, date)
 }

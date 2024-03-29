@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,6 +52,8 @@ fun TripsDetailScreen(navigateUp: () -> Unit, tripViewModel: TripViewModel) {
 @Composable
 private fun ScreenContent(modifier: Modifier, viewModel: TripViewModel) {
     val trip = viewModel.selectedTrip!!
+    var selectedDate by remember { mutableStateOf(trip.startDate) }
+    val activities by viewModel.getTripActivities(trip.tripId, selectedDate).observeAsState()
     Column(modifier) {
         AsyncImage(
             model = trip.imageUrl,
@@ -69,7 +72,7 @@ private fun ScreenContent(modifier: Modifier, viewModel: TripViewModel) {
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-            var selectedDate by remember { mutableStateOf(trip.startDate) }
+
             CustomDatePicker(
                 modifier = Modifier.weight(0.35f),
                 selectedDate = selectedDate,
@@ -77,6 +80,20 @@ private fun ScreenContent(modifier: Modifier, viewModel: TripViewModel) {
                 minDate = trip.startDate,
                 maxDate = trip.endDate
             )
+        }
+        if (!activities.isNullOrEmpty()) {
+            Text(
+                text = "Activities",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(16.dp)
+            )
+            activities?.forEach { activity ->
+                Text(
+                    text = activity.name,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
         }
     }
 

@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.example.madcapstone.data.models.roomModels.RoomActivity
 import com.example.madcapstone.data.models.roomModels.Trip
+import java.util.Date
 
 @Dao
 interface TripDao {
@@ -21,6 +22,6 @@ interface TripDao {
     @Delete
     suspend fun deleteTrip(trip: Trip)
 
-    @Query("SELECT activityTable.* FROM tripActivityTable INNER JOIN activityTable ON tripActivityTable.activityId = activityTable.activityId WHERE tripActivityTable.tripId = :tripId")
-    fun getTripActivities(tripId: String): LiveData<List<RoomActivity>>
+    @Query("SELECT activityTable.* FROM tripActivityTable INNER JOIN activityTable ON tripActivityTable.activityId = activityTable.activityId WHERE tripActivityTable.tripId = :tripId AND tripActivityTable.date = :date")
+    fun getTripActivities(tripId: String, date: Date): LiveData<List<RoomActivity>>
 }

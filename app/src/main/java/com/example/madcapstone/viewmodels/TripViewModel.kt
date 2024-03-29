@@ -45,7 +45,7 @@ class TripViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    fun getTripActivities(tripId: String): LiveData<List<RoomActivity>> {
-        return tripRepository.getTripActivities(tripId)
+    fun getTripActivities(tripId: String, date: Date): LiveData<List<RoomActivity>> {
+        return tripRepository.getTripActivities(tripId, date)
     }
 }
