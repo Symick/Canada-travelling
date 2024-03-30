@@ -36,6 +36,7 @@ import com.example.madcapstone.ui.theme.MadCapstoneTheme
 import com.example.madcapstone.utils.NavigationAnimations
 import com.example.madcapstone.viewmodels.ActivityViewModel
 import com.example.madcapstone.viewmodels.AuthViewModel
+import com.example.madcapstone.viewmodels.TripDetailViewModel
 import com.example.madcapstone.viewmodels.TripViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
@@ -71,6 +72,7 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
     val authViewModel: AuthViewModel = viewModel()
     val activityViewModel: ActivityViewModel = viewModel()
     val tripViewModel: TripViewModel = viewModel()
+    val tripDetailViewModel: TripDetailViewModel = viewModel()
     NavHost(navController = nc, startDestination = Screens.HomeScreen.route, modifier = modifier) {
         composable(Screens.HomeScreen.route) { HomeScreen() }
         composable(Screens.ExploreScreen.route) {
@@ -98,6 +100,9 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
                 }
             }
         }
+        composable(Screens.TripActivitiesScreen.route) {
+            ActivityScreen(tripDetailViewModel = tripDetailViewModel, navigateUp = { nc.popBackStack() })
+        }
         composable(Screens.AccountScreen.route) {
             if (Firebase.auth.currentUser != null) {
                 AccountScreen(viewModel = authViewModel, navigateTo = { nc.navigate(it) })
@@ -107,7 +112,13 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
                 }
             }
         }
-        composable(Screens.TripsDetailScreen.route) { TripsDetailScreen(navigateUp = { nc.popBackStack() }, tripViewModel) }
+        composable(Screens.TripsDetailScreen.route) {
+            TripsDetailScreen(
+                navigateUp = { nc.popBackStack() },
+                navigateTo = { nc.navigate(it) },
+                tripViewModel = tripViewModel,
+                detailViewModel = tripDetailViewModel) }
+
         composable(Screens.SignInScreen.route) {
             SignInScreen(
                 navigateUp = { nc.popBackStack() },

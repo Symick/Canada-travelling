@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,40 +39,58 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.madcapstone.R
 import com.example.madcapstone.data.models.firebaseModels.FirestoreActivity
+import com.example.madcapstone.data.models.roomModels.RoomActivity
+import com.example.madcapstone.data.util.ActivityConverter
 import com.example.madcapstone.ui.components.utils.RatingBar
 import com.example.madcapstone.utils.Utils
 
 @Composable
 fun SmallActivityCard(
     activity: FirestoreActivity,
-    onClick: (FirestoreActivity) -> Unit
+    onClick: () -> Unit
 ) {
     SmallActivityCard(activity, ActivityCardType.NORMAL, onClick = onClick)
 }
 
 @Composable
-fun ReviewActivityCard(activity: FirestoreActivity, onClick: (FirestoreActivity) -> Unit, onReview: (FirestoreActivity, rating:Int) -> Unit ) {
+fun ReviewActivityCard(
+    activity: FirestoreActivity,
+    onClick: () -> Unit,
+    onReview: (rating: Int) -> Unit
+) {
     SmallActivityCard(activity, ActivityCardType.REVIEW, onClick = onClick, onReview = onReview)
 }
 
 @Composable
 fun ExploreActivityCard(
     activity: FirestoreActivity,
-    onClick: (FirestoreActivity) -> Unit,
+    onClick: () -> Unit,
     onHearted: () -> Unit,
     isHearted: Boolean
 ) {
-    LargeActivityCard(activity, ActivityCardType.SEARCH, onClick = onClick, onHearted = onHearted, isHearted = isHearted)
+    LargeActivityCard(
+        activity,
+        ActivityCardType.SEARCH,
+        onClick = onClick,
+        onHearted = onHearted,
+        isHearted = isHearted
+    )
 }
 
 @Composable
 fun TripActivityCard(
-    activity: FirestoreActivity,
-    onClick: (FirestoreActivity) -> Unit,
-    onDelete: (FirestoreActivity) -> Unit,
-    onEdit: (FirestoreActivity) -> Unit
+    activity: RoomActivity,
+    onClick: () -> Unit,
+    onDelete: () -> Unit,
+    onEdit: () -> Unit
 ) {
-    LargeActivityCard(activity, ActivityCardType.TRIP, onClick = onClick, onDelete = onDelete, onEdit = onEdit)
+    LargeActivityCard(
+        ActivityConverter.convertToFirestoreActivity(activity),
+        ActivityCardType.TRIP,
+        onClick = onClick,
+        onDelete = onDelete,
+        onEdit = onEdit
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,8 +98,8 @@ fun TripActivityCard(
 private fun SmallActivityCard(
     activity: FirestoreActivity,
     type: ActivityCardType = ActivityCardType.NORMAL,
-    onClick: (FirestoreActivity) -> Unit,
-    onReview: ((FirestoreActivity, Int) -> Unit)? = null
+    onClick: () -> Unit,
+    onReview: ((Int) -> Unit)? = null
 ) {
     var reviewScore by remember { mutableIntStateOf(0) }
     var priceText = ""
@@ -96,7 +115,7 @@ private fun SmallActivityCard(
             contentColor = MaterialTheme.colorScheme.onSurface
         ),
         onClick = {
-            onClick(activity)
+            onClick()
         }
     ) {
         Row {
@@ -135,7 +154,7 @@ private fun SmallActivityCard(
                             rating = reviewScore,
                             onRatingChange = {
                                 reviewScore = it
-                                onReview!!(activity, it)
+                                onReview!!(it)
                             },
                             iconSize = smallIconSize,
                         )
@@ -161,9 +180,9 @@ private fun SmallActivityCard(
 private fun LargeActivityCard(
     activity: FirestoreActivity,
     type: ActivityCardType,
-    onClick: (FirestoreActivity) -> Unit,
-    onDelete: ((FirestoreActivity) -> Unit)? = null,
-    onEdit: ((FirestoreActivity) -> Unit)? = null,
+    onClick: () -> Unit,
+    onDelete: (() -> Unit)? = null,
+    onEdit: (() -> Unit)? = null,
     onHearted: (() -> Unit)? = null,
     isHearted: Boolean = false
 ) {
@@ -179,7 +198,7 @@ private fun LargeActivityCard(
             contentColor = MaterialTheme.colorScheme.onSurface
         ),
         onClick = {
-            onClick(activity)
+            onClick()
         }
     ) {
         Row {
@@ -207,7 +226,7 @@ private fun LargeActivityCard(
                         horizontalArrangement = Arrangement.End
                     ) {
                         IconButton(
-                            onClick = { onEdit!!(activity) },
+                            onClick = { onEdit!!() },
                             modifier = Modifier.size(iconButtonSize)
                         ) {
                             Icon(
@@ -220,7 +239,7 @@ private fun LargeActivityCard(
                         Spacer(modifier = Modifier.width(4.dp))
 
                         IconButton(
-                            onClick = { onDelete!!(activity) },
+                            onClick = { onDelete!!() },
                             modifier = Modifier.size(iconButtonSize)
                         ) {
                             Icon(
@@ -250,7 +269,9 @@ private fun LargeActivityCard(
                                     onClick = {
                                         onHearted!!()
                                     },
-                                    modifier = Modifier.size(iconButtonSize).weight(0.2f)
+                                    modifier = Modifier
+                                        .size(iconButtonSize)
+                                        .weight(0.2f)
                                 ) {
                                     Icon(
                                         if (isHearted) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
@@ -261,10 +282,12 @@ private fun LargeActivityCard(
                                 }
                             }
                         }
-                        Text(
-                            text = activity.Location,
-                            style = MaterialTheme.typography.bodySmall
-                        )
+                        if (type == ActivityCardType.SEARCH) {
+                            Text(
+                                text = activity.Location,
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
                     }
 
                     if (type == ActivityCardType.SEARCH) {
@@ -273,9 +296,20 @@ private fun LargeActivityCard(
                             reviewers = activity.amountOfReviews,
                             iconSize = 14.dp
                         )
+                        MonthlyVisitorsDisplay(visitors = activity.monthlyVisitors)
+                    } else {
+                        Row {
+                            Icon(imageVector = Icons.Default.LocationOn, contentDescription = "address")
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = activity.address,
+                                style = MaterialTheme.typography.bodySmall,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     }
 
-                    MonthlyVisitorsDisplay(visitors = activity.monthlyVisitors)
 
                     Text(text = getPriceText(activity), style = MaterialTheme.typography.bodySmall)
                 }

@@ -339,7 +339,7 @@ fun ActivityList(
                 var showTripBottomSheet by remember { mutableStateOf(false) }
                 var showAddActivityBottomSheet by remember { mutableStateOf(false) }
                 ExploreActivityCard(
-                    activity = activity, onClick = onClick,
+                    activity = activity, onClick = { onClick(activity) },
                     onHearted = {
                         if (isHearted) return@ExploreActivityCard
                         if (tripCount > 0) {

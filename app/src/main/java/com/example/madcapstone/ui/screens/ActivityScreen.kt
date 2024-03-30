@@ -1,5 +1,10 @@
 package com.example.madcapstone.ui.screens
 
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
+import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -30,6 +36,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -49,6 +56,7 @@ import com.example.madcapstone.ui.components.utils.RatingBar
 import com.example.madcapstone.ui.theme.customTopAppBarColor
 import com.example.madcapstone.utils.Utils
 import com.example.madcapstone.viewmodels.ActivityViewModel
+import com.example.madcapstone.viewmodels.TripDetailViewModel
 import com.example.madcapstone.viewmodels.TripViewModel
 
 @Composable
@@ -126,7 +134,7 @@ fun ActivityScreen(
         if (showCreateTripModel) {
             TripsBottomSheet(
                 onDismissRequest = { showCreateTripModel = false },
-                createTrip = {trip ->
+                createTrip = { trip ->
                     tripViewModel.insertTrip(trip)
                     showCreateTripModel = false
                     showAddActivityModel = true
@@ -136,10 +144,63 @@ fun ActivityScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ScreenContent(modifier: Modifier, activity: FirestoreActivity) {
+fun ActivityScreen(
+    tripDetailViewModel: TripDetailViewModel,
+    navigateUp: () -> Unit
+) {
+    val activity = tripDetailViewModel.selectedTripActivity!!
+    val context = LocalContext.current
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    /*TODO*/
+                },
+                colors = customTopAppBarColor(),
+                navigationIcon = {
+                    IconButton(onClick = { navigateUp() }) {
+                        Icon(
+                            Icons.Filled.KeyboardArrowLeft,
+                            contentDescription = "Back",
+                            modifier = Modifier.size(32.dp),
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(onClick = {
+                        openGoogleMaps(activity.address, context)
+                    }) {
+                        Icon(
+                            painterResource(R.drawable.baseline_assistant_navigation_24),
+                            contentDescription = "Navigate",
+                        )
+                    }
+                }
+
+            )
+        }
+    )
+    {
+        ScreenContent(
+            modifier = Modifier.padding(it),
+            activity = ActivityConverter.convertToFirestoreActivity(activity),
+            fromTrip = true
+        )
+
+    }
+}
+
+@Composable
+private fun ScreenContent(
+    modifier: Modifier,
+    activity: FirestoreActivity,
+    fromTrip: Boolean = false
+) {
 
     val openingHours = activity.openingHours
+    val context = LocalContext.current
     Column(modifier = modifier) {
         AsyncImage(
             model = activity.imageUrl,
@@ -156,22 +217,11 @@ private fun ScreenContent(modifier: Modifier, activity: FirestoreActivity) {
                 .verticalScroll(rememberScrollState())
         ) {
             Text(text = activity.name, style = MaterialTheme.typography.headlineMedium)
-            Row {
-                Icon(
-                    painterResource(R.drawable.outline_globe_24),
-                    contentDescription = "Location",
-                    modifier = Modifier.size(20.dp)
-                )
-                Text(
-                    text = activity.websiteUrl,
-                    style = MaterialTheme.typography.bodySmall,
-                    textDecoration = TextDecoration.Underline
-                )
+
+            if (!fromTrip) {
+                Spacer(modifier = Modifier.height(16.dp))
+                RatingBar(rating = activity.rating, reviewers = activity.amountOfReviews)
             }
-
-
-            Spacer(modifier = Modifier.height(16.dp))
-            RatingBar(rating = activity.rating, reviewers = activity.amountOfReviews)
             Spacer(modifier = Modifier.height(16.dp))
             Text(text = activity.description)
             Spacer(modifier = Modifier.height(16.dp))
@@ -186,6 +236,51 @@ private fun ScreenContent(modifier: Modifier, activity: FirestoreActivity) {
             )
             Text(text = getPriceText(activity))
 
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = stringResource(id = R.string.general_information),
+                style = MaterialTheme.typography.titleLarge
+            )
+
+            Text(
+                text = stringResource(id = R.string.website),
+                style = MaterialTheme.typography.labelMedium
+            )
+            Row(Modifier.clickable {
+                val intent = CustomTabsIntent.Builder().build()
+                intent.launchUrl(context, Uri.parse(activity.websiteUrl))
+            }) {
+                Icon(
+                    painterResource(R.drawable.outline_globe_24),
+                    contentDescription = "website",
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(
+                    text = activity.websiteUrl,
+                    style = MaterialTheme.typography.bodySmall,
+                    textDecoration = TextDecoration.Underline
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = stringResource(id = R.string.address),
+                style = MaterialTheme.typography.labelMedium
+            )
+            Row(
+                Modifier.clickable
+                {
+                    openGoogleMaps(activity.address, context)
+                },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(Icons.Default.LocationOn, contentDescription = "navigate")
+                Text(
+                    activity.address,
+                    textDecoration = TextDecoration.Underline,
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
         }
     }
 }
@@ -259,6 +354,13 @@ private fun DisplayOpeningDay(day: DayOfWeek, hours: OpeningHours) {
             )
         }
     }
+}
+
+private fun openGoogleMaps(address: String, context: Context) {
+    val gmmIntentUri = Uri.parse("google.navigation:q=$address")
+    val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
+    mapIntent.setPackage("com.google.android.apps.maps")
+    context.startActivity(mapIntent)
 }
 
 private enum class DayOfWeek(val day: String) {

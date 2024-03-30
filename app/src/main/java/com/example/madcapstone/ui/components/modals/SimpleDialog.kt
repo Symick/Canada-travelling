@@ -9,7 +9,7 @@ import com.example.madcapstone.R
 
 
 @Composable
-fun SimpleDialog(onDismissRequest: () -> Unit, title: String, message: String, onConfirm: () -> Unit) {
+fun SimpleDeleteDialog(onDismissRequest: () -> Unit, title: String, message: String, onConfirm: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismissRequest,
         title = {

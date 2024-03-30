@@ -20,5 +20,21 @@ class ActivityConverter {
                 openingHours = firestoreActivity.openingHours
             )
         }
+
+        fun convertToFirestoreActivity(roomActivity: RoomActivity) :FirestoreActivity {
+            return FirestoreActivity(
+                id = roomActivity.activityId,
+                name = roomActivity.name,
+                description = roomActivity.description,
+                imageUrl = roomActivity.imageUrl,
+                websiteUrl = roomActivity.websiteUrl,
+                Location = roomActivity.location,
+                address = roomActivity.address,
+                minPrice = roomActivity.minPrice,
+                maxPrice = roomActivity.maxPrice,
+                isFree = roomActivity.isFree,
+                openingHours = roomActivity.openingHours
+            )
+        }
     }
 }

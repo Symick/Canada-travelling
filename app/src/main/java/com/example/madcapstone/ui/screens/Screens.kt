@@ -12,6 +12,8 @@ sealed class Screens(
     data object ExploreScreen : Screens("Explore", R.drawable.baseline_search_24, R.string.screen_label_explore)
     data object TripsListScreen : Screens("TripsList", R.drawable.baseline_card_travel_24, R.string.screen_label_trips)
     data object TripsDetailScreen : Screens("TripsDetail")
+
+    data object TripActivitiesScreen : Screens("TripActivities")
     data object AccountScreen : Screens("Account", R.drawable.baseline_person_24, R.string.screen_label_account)
     data object AddActivityScreen : Screens("AddActivity", R.drawable.outline_add_box_24, R.string.screen_label_new_activities)
     data object ActivityDetailScreen : Screens("ActivityDetail")

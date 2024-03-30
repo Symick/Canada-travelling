@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.madcapstone.R
 import com.example.madcapstone.data.models.roomModels.Trip
-import com.example.madcapstone.ui.components.modals.SimpleDialog
+import com.example.madcapstone.ui.components.modals.SimpleDeleteDialog
 import com.example.madcapstone.ui.components.modals.TripsBottomSheet
 import com.example.madcapstone.ui.screens.Screens
 import com.example.madcapstone.ui.theme.customTopAppBarColor
@@ -94,7 +94,7 @@ private fun ScreenContent(
                 }
             )
             if (deleteModalVisible) {
-                SimpleDialog(
+                SimpleDeleteDialog(
                     onDismissRequest = { deleteModalVisible = false },
                     title = stringResource(id = R.string.delete_trip),
                     message = stringResource(R.string.delete_trip_message, tripToDelete?.title!!),

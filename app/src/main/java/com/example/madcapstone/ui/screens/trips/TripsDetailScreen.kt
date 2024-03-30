@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -21,16 +23,28 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.madcapstone.R
+import com.example.madcapstone.data.models.roomModels.TripActivity
 import com.example.madcapstone.ui.components.BackNavigationTopBar
+import com.example.madcapstone.ui.components.TripActivityCard
+import com.example.madcapstone.ui.components.modals.EditActivityBottomSheet
+import com.example.madcapstone.ui.components.modals.SimpleDeleteDialog
 import com.example.madcapstone.ui.components.utils.CustomDatePicker
+import com.example.madcapstone.ui.screens.Screens
 import com.example.madcapstone.utils.Utils
+import com.example.madcapstone.viewmodels.TripDetailViewModel
 import com.example.madcapstone.viewmodels.TripViewModel
 
 @Composable
-fun TripsDetailScreen(navigateUp: () -> Unit, tripViewModel: TripViewModel) {
+fun TripsDetailScreen(
+    navigateUp: () -> Unit,
+    tripViewModel: TripViewModel,
+    detailViewModel: TripDetailViewModel,
+    navigateTo: (String) -> Unit
+) {
     Scaffold(
         topBar = {
             BackNavigationTopBar(navigateUp)
@@ -45,12 +59,22 @@ fun TripsDetailScreen(navigateUp: () -> Unit, tripViewModel: TripViewModel) {
             }
         }
     ) {
-        ScreenContent(modifier = Modifier.padding(it), viewModel = tripViewModel)
+        ScreenContent(
+            modifier = Modifier.padding(it),
+            viewModel = tripViewModel,
+            detailViewModel = detailViewModel,
+            navigateTo = navigateTo
+        )
     }
 }
 
 @Composable
-private fun ScreenContent(modifier: Modifier, viewModel: TripViewModel) {
+private fun ScreenContent(
+    modifier: Modifier,
+    viewModel: TripViewModel,
+    detailViewModel: TripDetailViewModel,
+    navigateTo: (String) -> Unit
+) {
     val trip = viewModel.selectedTrip!!
     var selectedDate by remember { mutableStateOf(trip.startDate) }
     val activities by viewModel.getTripActivities(trip.tripId, selectedDate).observeAsState()
@@ -81,18 +105,57 @@ private fun ScreenContent(modifier: Modifier, viewModel: TripViewModel) {
                 maxDate = trip.endDate
             )
         }
-        if (!activities.isNullOrEmpty()) {
-            Text(
-                text = "Activities",
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.padding(16.dp)
-            )
-            activities?.forEach { activity ->
-                Text(
-                    text = activity.name,
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(16.dp)
-                )
+        LazyColumn(Modifier.padding(16.dp)) {
+            if (activities != null) {
+                items(activities!!) { activity ->
+                    var showDeleteDialog by remember { mutableStateOf(false) }
+                    var showEditDialog by remember { mutableStateOf(false) }
+                    TripActivityCard(activity = activity,
+                        onClick = {
+                            detailViewModel.setSelectedTripActivity(activity)
+                                  navigateTo(Screens.TripActivitiesScreen.route)
+                        },
+                        onDelete = {
+                            showDeleteDialog = true
+                        },
+                        onEdit = {
+                            showEditDialog = true
+                        })
+                    if (showDeleteDialog) {
+                        SimpleDeleteDialog(onDismissRequest = { showDeleteDialog = false },
+                            title = stringResource(id = R.string.delete_activity),
+                            message = stringResource(
+                                id = R.string.delete_activity_message,
+                                activity.name,
+                                trip.title
+                            ),
+                            onConfirm = {
+                                detailViewModel.deleteTripActivity(
+                                    TripActivity(
+                                        trip.tripId,
+                                        activity.activityId,
+                                        selectedDate
+                                    )
+                                )
+                                showDeleteDialog = false
+                            })
+                    }
+                    if (showEditDialog) {
+                        EditActivityBottomSheet(
+                            onDismissRequest = { showEditDialog = false },
+                            trip = trip,
+                            initialDate = selectedDate,
+                            activity = activity,
+                            onActivityEdit = {
+                                detailViewModel.updateTripActivity(it)
+                                showEditDialog = false
+                            })
+                    }
+                }
+            } else {
+                item {
+                    Text(stringResource(R.string.no_activities_on_this_day))
+                }
             }
         }
     }
