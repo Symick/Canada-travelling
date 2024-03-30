@@ -37,7 +37,6 @@ fun CustomDatePicker(
     enabled: Boolean = true
 ) {
     val state = rememberDatePickerState(
-        initialSelectedDateMillis = selectedDate.time
     )
     var showDialog by remember { mutableStateOf(false) }
     OutlinedTextField(

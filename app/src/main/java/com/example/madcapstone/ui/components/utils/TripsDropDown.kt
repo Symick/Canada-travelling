@@ -14,18 +14,31 @@ import com.example.madcapstone.data.models.roomModels.Trip
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TripsDropDown(modifier: Modifier = Modifier, selectedTrip: Trip?, trips: List<Trip>, isExpanded: Boolean, onExpandedChange: (Boolean) -> Unit, onTripSelected: (Trip) -> Unit) {
+fun TripsDropDown(
+    modifier: Modifier = Modifier,
+    selectedTrip: Trip?,
+    trips: List<Trip>,
+    isExpanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    onTripSelected: (Trip) -> Unit,
+    hasError: Boolean = false
+) {
 
-    ExposedDropdownMenuBox(expanded = isExpanded, onExpandedChange = onExpandedChange, modifier = modifier) {
+    ExposedDropdownMenuBox(
+        expanded = isExpanded,
+        onExpandedChange = onExpandedChange,
+        modifier = modifier
+    ) {
         OutlinedTextField(
             value = selectedTrip?.title ?: stringResource(R.string.select_trip),
             onValueChange = {},
             readOnly = true,
+            isError = hasError,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
             modifier = Modifier.menuAnchor(),
             colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors()
         )
-        ExposedDropdownMenu(expanded = isExpanded, onDismissRequest = {onExpandedChange(false)}) {
+        ExposedDropdownMenu(expanded = isExpanded, onDismissRequest = { onExpandedChange(false) }) {
             trips.forEach { trip ->
                 DropdownMenuItem(
                     text = { Text(trip.title) },

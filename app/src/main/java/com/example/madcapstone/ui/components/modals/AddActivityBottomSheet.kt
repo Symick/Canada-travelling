@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -17,22 +16,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.madcapstone.R
 import com.example.madcapstone.data.models.firebaseModels.FirestoreActivity
-import com.example.madcapstone.data.models.roomModels.RoomActivity
 import com.example.madcapstone.data.models.roomModels.Trip
-import com.example.madcapstone.data.util.ActivityConverter
 import com.example.madcapstone.ui.components.utils.CustomDatePicker
 import com.example.madcapstone.ui.components.utils.TripsDropDown
-import com.example.madcapstone.viewmodels.TripViewModel
+import com.example.madcapstone.utils.Utils
 import java.util.Date
 
 
@@ -40,8 +37,9 @@ import java.util.Date
 @Composable
 fun AddActivityBottomSheet(
     onDismissRequest: () -> Unit,
-    tripViewModel: TripViewModel,
-    activity: FirestoreActivity
+    trips: List<Trip>,
+    activity: FirestoreActivity,
+    onActivityAdd: (Trip, Date) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState()
     ModalBottomSheet(
@@ -64,18 +62,20 @@ fun AddActivityBottomSheet(
             var expandedDropDown by remember { mutableStateOf(false) }
             var selectedTrip by remember { mutableStateOf<Trip?>(null) }
             var selectedDate by remember { mutableStateOf(Date()) }
-            val trips by tripViewModel.trips.observeAsState()
+            var nonSelected by remember { mutableStateOf(false) }
+            val context = LocalContext.current
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 TripsDropDown(
                     modifier = Modifier.weight(0.5f, false),
                     selectedTrip = selectedTrip,
-                    trips = trips ?: emptyList(),
+                    trips = trips,
                     isExpanded = expandedDropDown,
                     onExpandedChange = { expandedDropDown = it },
                     onTripSelected = {
                         selectedTrip = it
                         selectedDate = it.startDate
-                    }
+                    },
+                    hasError = nonSelected
                 )
 
                 CustomDatePicker(
@@ -90,17 +90,19 @@ fun AddActivityBottomSheet(
 
             Button(
                 modifier = Modifier
-                    .padding(top = 16.dp).padding(bottom = 32.dp).align(Alignment.End),
+                    .padding(top = 16.dp)
+                    .padding(bottom = 32.dp)
+                    .align(Alignment.End),
                 onClick = {
-                    if (selectedTrip != null) {
-                        tripViewModel.addActivityToTrip(
-                            selectedTrip!!,
-                            ActivityConverter.convertToRoomActivity(activity),
-                            selectedDate
-                        )
-                        onDismissRequest()
+                    nonSelected = if (selectedTrip != null) {
+                        onActivityAdd(selectedTrip!!, selectedDate)
+                        false
+                    } else {
+                        Utils.showToast(context = context, message = R.string.select_trip)
+                        true
                     }
-                }) {
+                }
+            ) {
                 Text(text = stringResource(R.string.add_activity))
             }
         }

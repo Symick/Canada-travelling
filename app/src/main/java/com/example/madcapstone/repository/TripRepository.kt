@@ -1,6 +1,7 @@
 package com.example.madcapstone.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Transaction
 import com.example.madcapstone.data.database.PlanningDatabase
 import com.example.madcapstone.data.database.dao.RoomActivityDao
@@ -29,11 +30,20 @@ class TripRepository(context: Context) {
 
     suspend fun deleteTrip(trip: Trip) = tripDao.deleteTrip(trip)
 
+
     @Transaction
     suspend fun addActivityToTrip(trip: Trip, activity: RoomActivity, date: Date) {
         activityDao.insertRoomActivity(activity)
         tripActivityDao.insertTripActivity(TripActivity(trip.tripId, activity.activityId, date))
+        val count = tripDao.getActivitiesForTripCount(trip.tripId)
+        if (count == 1) {
+            tripDao.updateTrip(trip.copy(imageUrl = activity.imageUrl))
+        }
     }
 
     fun getTripActivities(tripId: String, date: Date) = tripDao.getTripActivities(tripId, date)
+
+    fun getTripsWithoutActivity(activityId: String) = tripDao.getTripsWithoutActivity(activityId)
+
+    fun getTripsCount() = tripDao.getTripsCount()
 }

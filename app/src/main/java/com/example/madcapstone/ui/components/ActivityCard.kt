@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -59,9 +58,10 @@ fun ReviewActivityCard(activity: FirestoreActivity, onClick: (FirestoreActivity)
 fun ExploreActivityCard(
     activity: FirestoreActivity,
     onClick: (FirestoreActivity) -> Unit,
-    onHearted: (FirestoreActivity) -> Unit
+    onHearted: () -> Unit,
+    isHearted: Boolean
 ) {
-    LargeActivityCard(activity, ActivityCardType.SEARCH, onClick = onClick, onHearted = onHearted)
+    LargeActivityCard(activity, ActivityCardType.SEARCH, onClick = onClick, onHearted = onHearted, isHearted = isHearted)
 }
 
 @Composable
@@ -164,7 +164,8 @@ private fun LargeActivityCard(
     onClick: (FirestoreActivity) -> Unit,
     onDelete: ((FirestoreActivity) -> Unit)? = null,
     onEdit: ((FirestoreActivity) -> Unit)? = null,
-    onHearted: ((FirestoreActivity) -> Unit)? = null,
+    onHearted: (() -> Unit)? = null,
+    isHearted: Boolean = false
 ) {
     val iconButtonSize = 30.dp
     val iconSize = 20.dp
@@ -244,17 +245,15 @@ private fun LargeActivityCard(
                                 overflow = TextOverflow.Ellipsis
                             )
                             if (type == ActivityCardType.SEARCH) {
-                                var heartState by remember { mutableStateOf(false) }
                                 Spacer(modifier = Modifier.width(8.dp))
                                 IconButton(
                                     onClick = {
-                                        heartState = !heartState
-                                        onHearted!!(activity)
+                                        onHearted!!()
                                     },
                                     modifier = Modifier.size(iconButtonSize).weight(0.2f)
                                 ) {
                                     Icon(
-                                        if (heartState) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                        if (isHearted) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                                         contentDescription = "Favorite",
                                         Modifier.size(iconSize),
                                         tint = Color.Red

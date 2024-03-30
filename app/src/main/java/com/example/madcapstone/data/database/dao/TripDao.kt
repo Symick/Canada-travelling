@@ -6,6 +6,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.example.madcapstone.data.models.roomModels.RoomActivity
 import com.example.madcapstone.data.models.roomModels.Trip
 import java.util.Date
@@ -24,4 +25,16 @@ interface TripDao {
 
     @Query("SELECT activityTable.* FROM tripActivityTable INNER JOIN activityTable ON tripActivityTable.activityId = activityTable.activityId WHERE tripActivityTable.tripId = :tripId AND tripActivityTable.date = :date")
     fun getTripActivities(tripId: String, date: Date): LiveData<List<RoomActivity>>
+
+    @Query("SELECT * FROM tripTable WHERE tripId NOT in (SELECT tripId FROM tripActivityTable WHERE activityId == :activityId)")
+    fun getTripsWithoutActivity(activityId: String): LiveData<List<Trip>>
+
+    @Query("SELECT COUNT(*) FROM tripTable")
+    fun getTripsCount(): LiveData<Int>
+
+    @Query("SELECT COUNT(*) FROM tripActivityTable WHERE tripId = :tripId")
+    suspend fun getActivitiesForTripCount(tripId: String): Int
+
+    @Update
+    suspend fun updateTrip(trip: Trip)
 }

@@ -16,6 +16,7 @@ class TripViewModel(application: Application): AndroidViewModel(application) {
     private val tripRepository = TripRepository(application.applicationContext)
 
     val trips = tripRepository.getTrips()
+    val tripsCount = tripRepository.getTripsCount()
 
 
 
@@ -47,5 +48,9 @@ class TripViewModel(application: Application): AndroidViewModel(application) {
 
     fun getTripActivities(tripId: String, date: Date): LiveData<List<RoomActivity>> {
         return tripRepository.getTripActivities(tripId, date)
+    }
+
+    fun getTripsWithoutActivity(activityId: String): LiveData<List<Trip>> {
+        return tripRepository.getTripsWithoutActivity(activityId)
     }
 }

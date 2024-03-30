@@ -47,18 +47,26 @@ import androidx.compose.ui.unit.dp
 import com.example.madcapstone.R
 import com.example.madcapstone.data.models.firebaseModels.City
 import com.example.madcapstone.data.models.firebaseModels.FirestoreActivity
+import com.example.madcapstone.data.util.ActivityConverter
 import com.example.madcapstone.data.util.Resource
 import com.example.madcapstone.state.SearchFilterState
 import com.example.madcapstone.state.rememberSearchFilterState
 import com.example.madcapstone.ui.components.ExploreActivityCard
+import com.example.madcapstone.ui.components.modals.AddActivityBottomSheet
+import com.example.madcapstone.ui.components.modals.TripsBottomSheet
 import com.example.madcapstone.ui.components.utils.CustomRangeSlider
 import com.example.madcapstone.ui.components.utils.RatingBar
 import com.example.madcapstone.ui.theme.customTopAppBarColor
 import com.example.madcapstone.viewmodels.ActivityViewModel
+import com.example.madcapstone.viewmodels.TripViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun ExploreScreen(viewModel: ActivityViewModel, navigateTo: (String) -> Unit) {
+fun ExploreScreen(
+    viewModel: ActivityViewModel,
+    navigateTo: (String) -> Unit,
+    tripViewModel: TripViewModel
+) {
     Scaffold(topBar = {
         CenterAlignedTopAppBar(
             title =
@@ -71,7 +79,12 @@ fun ExploreScreen(viewModel: ActivityViewModel, navigateTo: (String) -> Unit) {
             colors = customTopAppBarColor()
         )
     }) {
-        ScreenContent(modifier = Modifier.padding(it), viewModel, navigateTo = navigateTo)
+        ScreenContent(
+            modifier = Modifier.padding(it),
+            viewModel,
+            navigateTo = navigateTo,
+            tripViewModel
+        )
     }
 }
 
@@ -80,7 +93,8 @@ fun ExploreScreen(viewModel: ActivityViewModel, navigateTo: (String) -> Unit) {
 private fun ScreenContent(
     modifier: Modifier,
     viewModel: ActivityViewModel,
-    navigateTo: (String) -> Unit
+    navigateTo: (String) -> Unit,
+    tripViewModel: TripViewModel
 ) {
     val searchQuery by viewModel.searchQuery.collectAsState()
     var searchActive by remember { mutableStateOf(false) }
@@ -166,7 +180,7 @@ private fun ScreenContent(
             ActivityList(activities, onClick = {
                 viewModel.setSelectedActivity(it)
                 navigateTo(Screens.ActivityDetailScreen.route)
-            }, onHearted = {})
+            }, tripViewModel)
         }
     }
 }
@@ -313,12 +327,55 @@ private fun FilterForm(
 fun ActivityList(
     activityList: Resource<List<FirestoreActivity>>,
     onClick: (FirestoreActivity) -> Unit,
-    onHearted: (FirestoreActivity) -> Unit
+    tripViewModel: TripViewModel
 ) {
     LazyColumn {
         if (activityList is Resource.Success) {
             items(activityList.data!!) { activity ->
-                ExploreActivityCard(activity = activity, onClick = onClick, onHearted = onHearted)
+                val tripCount by tripViewModel.tripsCount.observeAsState(0)
+                val tripsWithoutActivity by tripViewModel.getTripsWithoutActivity(activity.id)
+                    .observeAsState()
+                val isHearted = tripCount > 0 && tripsWithoutActivity.isNullOrEmpty()
+                var showTripBottomSheet by remember { mutableStateOf(false) }
+                var showAddActivityBottomSheet by remember { mutableStateOf(false) }
+                ExploreActivityCard(
+                    activity = activity, onClick = onClick,
+                    onHearted = {
+                        if (isHearted) return@ExploreActivityCard
+                        if (tripCount > 0) {
+                            showAddActivityBottomSheet = true
+                        } else {
+                            showTripBottomSheet = true
+                        }
+                    },
+                    isHearted = isHearted
+                )
+                if (showTripBottomSheet) {
+                    TripsBottomSheet(
+                        onDismissRequest = { showTripBottomSheet = false },
+                        createTrip = {
+                            tripViewModel.insertTrip(it)
+                            showTripBottomSheet = false
+                            showAddActivityBottomSheet = true
+                        }
+
+                    )
+                }
+                if (showAddActivityBottomSheet) {
+                    AddActivityBottomSheet(
+                        onDismissRequest = { showAddActivityBottomSheet = false },
+                        trips = tripsWithoutActivity?: emptyList(),
+                        activity = activity,
+                        onActivityAdd = { trip, date ->
+                            tripViewModel.addActivityToTrip(
+                                trip,
+                                ActivityConverter.convertToRoomActivity(activity),
+                                date
+                            )
+                            showAddActivityBottomSheet = false
+                        }
+                    )
+                }
                 Spacer(modifier = Modifier.height(16.dp))
             }
         }
@@ -331,18 +388,6 @@ fun ActivityList(
         if (activityList is Resource.Empty) {
             item {
                 Text(stringResource(R.string.no_activities_found))
-            }
-        }
-
-        if (activityList is Resource.Error) {
-            item {
-                Text(activityList.message!!)
-            }
-        }
-
-        if (activityList is Resource.Initial) {
-            item {
-                Text("Initial State")
             }
         }
     }

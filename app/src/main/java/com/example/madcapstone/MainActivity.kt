@@ -76,7 +76,8 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
         composable(Screens.ExploreScreen.route) {
             ExploreScreen(
                 activityViewModel,
-                navigateTo = { nc.navigate(Screens.ActivityDetailScreen.route) }
+                navigateTo = { nc.navigate(Screens.ActivityDetailScreen.route) },
+                tripViewModel = tripViewModel
             )
         }
         composable(
