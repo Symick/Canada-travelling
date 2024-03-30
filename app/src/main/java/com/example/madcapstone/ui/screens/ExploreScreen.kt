@@ -365,7 +365,6 @@ fun ActivityList(
                     AddActivityBottomSheet(
                         onDismissRequest = { showAddActivityBottomSheet = false },
                         trips = tripsWithoutActivity?: emptyList(),
-                        activity = activity,
                         onActivityAdd = { trip, date ->
                             tripViewModel.addActivityToTrip(
                                 trip,

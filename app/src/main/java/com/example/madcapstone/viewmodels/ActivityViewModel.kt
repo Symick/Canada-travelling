@@ -41,7 +41,7 @@ class ActivityViewModel : ViewModel() {
      */
     init {
         viewModelScope.launch {
-            _searchQuery.debounce(750L).collect() {
+            _searchQuery.debounce(500L).collect() {
                 searchCities(it)
             }
         }

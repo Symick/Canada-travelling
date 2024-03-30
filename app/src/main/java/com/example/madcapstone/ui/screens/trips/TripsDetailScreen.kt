@@ -2,8 +2,10 @@ package com.example.madcapstone.ui.screens.trips
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -30,6 +32,7 @@ import com.example.madcapstone.R
 import com.example.madcapstone.data.models.roomModels.TripActivity
 import com.example.madcapstone.ui.components.BackNavigationTopBar
 import com.example.madcapstone.ui.components.TripActivityCard
+import com.example.madcapstone.ui.components.modals.AddActivityBottomSheet
 import com.example.madcapstone.ui.components.modals.EditActivityBottomSheet
 import com.example.madcapstone.ui.components.modals.SimpleDeleteDialog
 import com.example.madcapstone.ui.components.utils.CustomDatePicker
@@ -45,13 +48,16 @@ fun TripsDetailScreen(
     detailViewModel: TripDetailViewModel,
     navigateTo: (String) -> Unit
 ) {
+    var openAddActivityDialog by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             BackNavigationTopBar(navigateUp)
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /*TODO*/ },
+                onClick = {
+                          openAddActivityDialog = true
+                },
                 containerColor = MaterialTheme.colorScheme.surfaceVariant,
                 contentColor = MaterialTheme.colorScheme.onSurfaceVariant
             ) {
@@ -63,7 +69,9 @@ fun TripsDetailScreen(
             modifier = Modifier.padding(it),
             viewModel = tripViewModel,
             detailViewModel = detailViewModel,
-            navigateTo = navigateTo
+            navigateTo = navigateTo,
+            modelOpened = openAddActivityDialog,
+            closeDialog = { openAddActivityDialog = false }
         )
     }
 }
@@ -73,7 +81,9 @@ private fun ScreenContent(
     modifier: Modifier,
     viewModel: TripViewModel,
     detailViewModel: TripDetailViewModel,
-    navigateTo: (String) -> Unit
+    navigateTo: (String) -> Unit,
+    modelOpened: Boolean = false,
+    closeDialog: () -> Unit
 ) {
     val trip = viewModel.selectedTrip!!
     var selectedDate by remember { mutableStateOf(trip.startDate) }
@@ -121,6 +131,7 @@ private fun ScreenContent(
                         onEdit = {
                             showEditDialog = true
                         })
+                    Spacer(modifier = Modifier.height(16.dp))
                     if (showDeleteDialog) {
                         SimpleDeleteDialog(onDismissRequest = { showDeleteDialog = false },
                             title = stringResource(id = R.string.delete_activity),
@@ -159,5 +170,14 @@ private fun ScreenContent(
             }
         }
     }
-
+    if (modelOpened) {
+        AddActivityBottomSheet(
+            onDismissRequest = closeDialog,
+            tripDetailViewModel = detailViewModel,
+            onActivityAdd = {
+                viewModel.addActivityToTrip(trip, it, selectedDate)
+                closeDialog()
+            }
+        )
+    }
 }

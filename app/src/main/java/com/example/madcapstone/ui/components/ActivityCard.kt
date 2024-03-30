@@ -110,16 +110,15 @@ private fun SmallActivityCard(
     ElevatedCard(modifier = Modifier
         .width(if (type == ActivityCardType.REVIEW) 200.dp else 250.dp)
         .height(150.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface,
-            contentColor = MaterialTheme.colorScheme.onSurface
+        colors = CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
         ),
         onClick = {
             onClick()
         }
     ) {
         Row {
-            //TODO Async image from activity.imageUrl
             AsyncImage(
                 model = activity.imageUrl,
                 contentDescription = "Activity image",
@@ -137,6 +136,8 @@ private fun SmallActivityCard(
                     Text(
                         text = activity.name,
                         style = if (type == ActivityCardType.NORMAL) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleSmall,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = activity.Location,
@@ -259,7 +260,7 @@ private fun LargeActivityCard(
                                 text = activity.name,
                                 style = MaterialTheme.typography.titleMedium,
                                 fontWeight = FontWeight.Bold,
-                                maxLines = 2,
+                                maxLines = if (type == ActivityCardType.TRIP) 1 else 2,
                                 modifier = Modifier.weight(0.8f),
                                 overflow = TextOverflow.Ellipsis
                             )

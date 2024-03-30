@@ -51,6 +51,41 @@ class ActivityRepository {
         return Resource.Success(cities)
     }
 
+    suspend fun getActivities(activityName: String): Resource<List<FirestoreActivity>> {
+        if (activityName.isBlank()) {
+            return Resource.Initial()
+        }
+
+        val activities = mutableListOf<FirestoreActivity>()
+        val capitalizedQuery = activityName.replaceFirstChar { it.uppercase() }
+        try {
+            val response = activityRef
+                .whereGreaterThanOrEqualTo(NAME, capitalizedQuery)
+                .whereLessThanOrEqualTo(NAME, capitalizedQuery + "\uf8ff")
+                .limit(10)
+                .get()
+                .await()
+
+            for (document in response.documents) {
+                val activity = document.toObject(FirestoreActivity::class.java)
+                // add activity to list if not null
+                activity?.let {
+                    activities.add(it)
+                }
+            }
+        } catch (e: Exception) {
+            return Resource.Error(
+                e.localizedMessage ?: "An unknown error occurred while searching activities."
+            )
+        }
+
+        if (activities.isEmpty()) {
+            return Resource.Empty()
+        }
+        return Resource.Success(activities)
+    }
+
+
     suspend fun getActivities(cityName: String, filters: SearchFilterState): Resource<List<FirestoreActivity>> {
         if (cityName.isBlank()) {
             return Resource.Initial()

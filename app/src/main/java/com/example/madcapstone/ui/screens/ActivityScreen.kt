@@ -120,7 +120,6 @@ fun ActivityScreen(
 
             AddActivityBottomSheet(onDismissRequest = { showAddActivityModel = false },
                 trips!!,
-                activity,
                 onActivityAdd = { trip, date ->
                     tripViewModel.addActivityToTrip(
                         trip,
