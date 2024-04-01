@@ -74,4 +74,6 @@ class TripDetailViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
+    fun getTripActivity(tripId: String, activityId: String) = tripActivityRepository.getTripActivity(tripId, activityId)
+
 }

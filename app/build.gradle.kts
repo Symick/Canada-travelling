@@ -67,6 +67,8 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation("androidx.compose.runtime:runtime-livedata:1.6.4")
     implementation("com.google.code.gson:gson:2.10.1")
+    implementation ("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.0")
 
     // Room database
     val roomVersion = "2.6.1"
@@ -86,6 +88,9 @@ dependencies {
 
     //coil
     implementation("io.coil-kt:coil-compose:2.1.0")
+
+    //WorkManager
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

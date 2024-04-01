@@ -1,5 +1,6 @@
 package com.example.madcapstone.data.models.roomModels
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import java.util.Date
@@ -25,5 +26,7 @@ import java.util.Date
 data class TripActivity(
     val tripId: String,
     val activityId: String,
-    val date: Date
+    val date: Date,
+    val createdAt: Date = Date(),
+    val updatedAt: Date = Date()
 )

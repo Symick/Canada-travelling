@@ -22,6 +22,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkRequest
+import com.example.madcapstone.data.syncWorkers.TripsSyncWorker
 import com.example.madcapstone.ui.components.CanadaTripsBottomBar
 import com.example.madcapstone.ui.screens.AccountScreen
 import com.example.madcapstone.ui.screens.ActivityScreen
@@ -34,6 +37,7 @@ import com.example.madcapstone.ui.screens.trips.TripsDetailScreen
 import com.example.madcapstone.ui.screens.trips.TripsListScreen
 import com.example.madcapstone.ui.theme.MadCapstoneTheme
 import com.example.madcapstone.utils.NavigationAnimations
+import com.example.madcapstone.utils.Sync
 import com.example.madcapstone.viewmodels.ActivityViewModel
 import com.example.madcapstone.viewmodels.AuthViewModel
 import com.example.madcapstone.viewmodels.TripDetailViewModel
@@ -64,6 +68,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Sync.syncTripsToFirebase(applicationContext)
     }
 }
 

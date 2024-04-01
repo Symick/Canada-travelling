@@ -41,7 +41,7 @@ fun EditActivityBottomSheet(
     onDismissRequest: () -> Unit,
     trip: Trip,
     initialDate: Date,
-    activity: RoomActivity,
+    activity: TripActivity,
     onActivityEdit: (TripActivity) -> Unit,
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -95,7 +95,12 @@ fun EditActivityBottomSheet(
                     if (selectedDate == initialDate) {
                         onDismissRequest()
                     } else {
-                        onActivityEdit(TripActivity(trip.tripId, activity.activityId, selectedDate))
+                        onActivityEdit(
+                            activity.copy(
+                                date = selectedDate,
+                                updatedAt = Date()
+                            )
+                        )
                     }
                 }
             ) {

@@ -120,6 +120,7 @@ private fun ScreenContent(
                 items(activities!!) { activity ->
                     var showDeleteDialog by remember { mutableStateOf(false) }
                     var showEditDialog by remember { mutableStateOf(false) }
+                    val tripActivity by detailViewModel.getTripActivity(trip.tripId, activity.activityId).observeAsState()
                     TripActivityCard(activity = activity,
                         onClick = {
                             detailViewModel.setSelectedTripActivity(activity)
@@ -142,11 +143,7 @@ private fun ScreenContent(
                             ),
                             onConfirm = {
                                 detailViewModel.deleteTripActivity(
-                                    TripActivity(
-                                        trip.tripId,
-                                        activity.activityId,
-                                        selectedDate
-                                    )
+                                    tripActivity!!
                                 )
                                 showDeleteDialog = false
                             })
@@ -156,7 +153,7 @@ private fun ScreenContent(
                             onDismissRequest = { showEditDialog = false },
                             trip = trip,
                             initialDate = selectedDate,
-                            activity = activity,
+                            activity = tripActivity!!,
                             onActivityEdit = {
                                 detailViewModel.updateTripActivity(it)
                                 showEditDialog = false

@@ -37,4 +37,7 @@ interface TripDao {
 
     @Update
     suspend fun updateTrip(trip: Trip)
+
+    @Query("SELECT * FROM tripTable WHERE updatedAt > :syncDate")
+    fun getUpdatedTrips(syncDate: Date): List<Trip>
 }

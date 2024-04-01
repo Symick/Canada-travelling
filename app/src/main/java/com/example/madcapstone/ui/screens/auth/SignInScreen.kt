@@ -80,11 +80,12 @@ private fun ScreenContent(
     }
 
     if (authState is Resource.Error) {
-        Utils.showToast(
-            LocalContext.current,
-            (authState as Resource.Error<Boolean>).message ?: "An error occurred"
-        )
-        viewModel.resetState()
+//        Utils.showToast(
+//            LocalContext.current,
+//            (authState as Resource.Error<Boolean>).message ?: "An error occurred"
+//        )
+//        viewModel.resetState()
+        Text((authState as Resource.Error<Boolean>).message ?: "An error occurred", modifier.padding(16.dp))
     }
 
     val context = LocalContext.current

@@ -1,12 +1,12 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 2,
-    "identityHash": "652eb35be7aeb0418b48f0cd8890d7ce",
+    "version": 4,
+    "identityHash": "ca12397be3f1a17bb0afde951c9975ec",
     "entities": [
       {
         "tableName": "tripTable",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`title` TEXT NOT NULL, `startDate` INTEGER NOT NULL, `endDate` INTEGER NOT NULL, `imageUrl` TEXT, `updatedAt` INTEGER NOT NULL, `tripId` TEXT NOT NULL, PRIMARY KEY(`tripId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`title` TEXT NOT NULL, `startDate` INTEGER NOT NULL, `endDate` INTEGER NOT NULL, `imageUrl` TEXT, `updatedAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `tripId` TEXT NOT NULL, PRIMARY KEY(`tripId`))",
         "fields": [
           {
             "fieldPath": "title",
@@ -31,6 +31,12 @@
             "columnName": "imageUrl",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
             "fieldPath": "updatedAt",
@@ -82,7 +88,7 @@
       },
       {
         "tableName": "tripActivityTable",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`tripId` TEXT NOT NULL, `activityId` TEXT NOT NULL, `date` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`tripId`, `activityId`), FOREIGN KEY(`tripId`) REFERENCES `tripTable`(`tripId`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`activityId`) REFERENCES `activityTable`(`activityId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`tripId` TEXT NOT NULL, `activityId` TEXT NOT NULL, `date` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`tripId`, `activityId`), FOREIGN KEY(`tripId`) REFERENCES `tripTable`(`tripId`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`activityId`) REFERENCES `activityTable`(`activityId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "tripId",
@@ -99,6 +105,12 @@
           {
             "fieldPath": "date",
             "columnName": "date",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -221,12 +233,50 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "deletedEntityTable",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`tripId` TEXT NOT NULL, `type` TEXT NOT NULL, `activityId` TEXT, `entityId` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "tripId",
+            "columnName": "tripId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "activityId",
+            "columnName": "activityId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "entityId",
+            "columnName": "entityId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "entityId"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '652eb35be7aeb0418b48f0cd8890d7ce')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ca12397be3f1a17bb0afde951c9975ec')"
     ]
   }
 }

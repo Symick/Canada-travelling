@@ -6,20 +6,19 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.example.madcapstone.data.database.dao.DeletedEntityDao
 import com.example.madcapstone.data.database.dao.RoomActivityDao
 import com.example.madcapstone.data.database.dao.TripActivityDao
 import com.example.madcapstone.data.database.dao.TripDao
 import com.example.madcapstone.data.database.dao.UserDao
+import com.example.madcapstone.data.models.roomModels.DeletedEntity
 import com.example.madcapstone.data.models.roomModels.RoomActivity
 import com.example.madcapstone.data.models.roomModels.SyncedUser
 import com.example.madcapstone.data.models.roomModels.Trip
 import com.example.madcapstone.data.models.roomModels.TripActivity
 
-@Database(entities = [Trip::class, SyncedUser::class, TripActivity::class, RoomActivity::class], version = 2, exportSchema = true,
-    autoMigrations = [
-        AutoMigration(from = 1, to = 2)
-    ]
-    )
+@Database(entities = [Trip::class, SyncedUser::class, TripActivity::class, RoomActivity::class, DeletedEntity::class], version = 5, exportSchema = true,
+       )
 @TypeConverters(TypeConverter::class)
 abstract class PlanningDatabase: RoomDatabase() {
     abstract fun tripDao(): TripDao
@@ -28,8 +27,10 @@ abstract class PlanningDatabase: RoomDatabase() {
     abstract fun roomActivityDao(): RoomActivityDao
     abstract fun tripActivityDao(): TripActivityDao
 
+    abstract fun deletedEntityDao(): DeletedEntityDao
+
     companion object {
-        const val DATABASE_NAME = "PLANNING_DATABASE"
+        private const val DATABASE_NAME = "PLANNING_DATABASE"
 
         // For Singleton instantiation
         @Volatile
@@ -41,7 +42,8 @@ abstract class PlanningDatabase: RoomDatabase() {
                     context.applicationContext,
                     PlanningDatabase::class.java,
                     DATABASE_NAME
-                ).build()
+                ).fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 return instance
             }

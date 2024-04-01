@@ -1,9 +1,11 @@
 package com.example.madcapstone.data.util
 
 import com.example.madcapstone.data.models.firebaseModels.FirestoreActivity
+import com.example.madcapstone.data.models.firebaseModels.FirestoreTrip
 import com.example.madcapstone.data.models.roomModels.RoomActivity
+import com.example.madcapstone.data.models.roomModels.Trip
 
-class ActivityConverter {
+class ModelConverter {
     companion object{
         fun convertToRoomActivity(firestoreActivity: FirestoreActivity) :RoomActivity {
             return RoomActivity(
@@ -34,6 +36,18 @@ class ActivityConverter {
                 maxPrice = roomActivity.maxPrice,
                 isFree = roomActivity.isFree,
                 openingHours = roomActivity.openingHours
+            )
+        }
+
+        fun convertToFirestoreTrip(roomTrip: Trip, userId: String) : FirestoreTrip {
+            return FirestoreTrip(
+                tripId = roomTrip.tripId,
+                userId = userId,
+                title = roomTrip.title,
+                imageUrl = roomTrip.imageUrl,
+                startDate = roomTrip.startDate,
+                endDate = roomTrip.endDate,
+                createdAt = roomTrip.createdAt
             )
         }
     }

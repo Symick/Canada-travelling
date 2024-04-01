@@ -7,7 +7,8 @@ import com.google.firebase.firestore.DocumentId
 
 @Entity(tableName = "activityTable")
 data class RoomActivity(
-    @PrimaryKey(autoGenerate = false) val activityId: String,
+    @PrimaryKey(autoGenerate = false)
+    val activityId: String,
     val name: String,
     val description: String,
     val imageUrl: String,

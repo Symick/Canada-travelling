@@ -40,7 +40,7 @@ import coil.compose.AsyncImage
 import com.example.madcapstone.R
 import com.example.madcapstone.data.models.firebaseModels.FirestoreActivity
 import com.example.madcapstone.data.models.roomModels.RoomActivity
-import com.example.madcapstone.data.util.ActivityConverter
+import com.example.madcapstone.data.util.ModelConverter
 import com.example.madcapstone.ui.components.utils.RatingBar
 import com.example.madcapstone.utils.Utils
 
@@ -85,7 +85,7 @@ fun TripActivityCard(
     onEdit: () -> Unit
 ) {
     LargeActivityCard(
-        ActivityConverter.convertToFirestoreActivity(activity),
+        ModelConverter.convertToFirestoreActivity(activity),
         ActivityCardType.TRIP,
         onClick = onClick,
         onDelete = onDelete,

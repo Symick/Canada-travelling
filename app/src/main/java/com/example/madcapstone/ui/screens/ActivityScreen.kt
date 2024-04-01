@@ -49,7 +49,7 @@ import coil.compose.AsyncImage
 import com.example.madcapstone.R
 import com.example.madcapstone.data.models.firebaseModels.FirestoreActivity
 import com.example.madcapstone.data.models.firebaseModels.OpeningHours
-import com.example.madcapstone.data.util.ActivityConverter
+import com.example.madcapstone.data.util.ModelConverter
 import com.example.madcapstone.ui.components.modals.AddActivityBottomSheet
 import com.example.madcapstone.ui.components.modals.TripsBottomSheet
 import com.example.madcapstone.ui.components.utils.RatingBar
@@ -123,7 +123,7 @@ fun ActivityScreen(
                 onActivityAdd = { trip, date ->
                     tripViewModel.addActivityToTrip(
                         trip,
-                        ActivityConverter.convertToRoomActivity(activity),
+                        ModelConverter.convertToRoomActivity(activity),
                         date
                     )
                     showAddActivityModel = false
@@ -184,7 +184,7 @@ fun ActivityScreen(
     {
         ScreenContent(
             modifier = Modifier.padding(it),
-            activity = ActivityConverter.convertToFirestoreActivity(activity),
+            activity = ModelConverter.convertToFirestoreActivity(activity),
             fromTrip = true
         )
 

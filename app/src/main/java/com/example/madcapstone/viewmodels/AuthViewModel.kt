@@ -12,7 +12,7 @@ import com.example.madcapstone.utils.Utils
 import kotlinx.coroutines.launch
 
 class AuthViewModel(private val application: Application) : AndroidViewModel(application) {
-    private val authRepository = AuthRepository()
+    private val authRepository = AuthRepository(context = application.applicationContext)
 
     private val _authState = MutableLiveData<Resource<Boolean>>(Resource.Initial())
     val authState: LiveData<Resource<Boolean>> get() = _authState

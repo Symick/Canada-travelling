@@ -47,7 +47,7 @@ import androidx.compose.ui.unit.dp
 import com.example.madcapstone.R
 import com.example.madcapstone.data.models.firebaseModels.City
 import com.example.madcapstone.data.models.firebaseModels.FirestoreActivity
-import com.example.madcapstone.data.util.ActivityConverter
+import com.example.madcapstone.data.util.ModelConverter
 import com.example.madcapstone.data.util.Resource
 import com.example.madcapstone.state.SearchFilterState
 import com.example.madcapstone.state.rememberSearchFilterState
@@ -368,7 +368,7 @@ fun ActivityList(
                         onActivityAdd = { trip, date ->
                             tripViewModel.addActivityToTrip(
                                 trip,
-                                ActivityConverter.convertToRoomActivity(activity),
+                                ModelConverter.convertToRoomActivity(activity),
                                 date
                             )
                             showAddActivityBottomSheet = false
