@@ -16,6 +16,9 @@ interface TripActivityDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTripActivity(tripActivity: TripActivity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTripActivities(tripActivities: List<TripActivity>)
+
     @Delete
     suspend fun deleteTripActivity(tripActivity: TripActivity)
 
@@ -24,6 +27,8 @@ interface TripActivityDao {
 
     @Query("SELECT * FROM tripActivityTable WHERE tripId = :tripId AND activityId = :activityId")
     fun getTripActivity(tripId: String, activityId: String): LiveData<TripActivity>
+
+
 
 
     @Query("SELECT * FROM tripActivityTable WHERE updatedAt > :syncDate")

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
@@ -19,6 +20,9 @@ interface TripDao {
 
     @Insert
     suspend fun insertTrip(trip: Trip)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTrips(trips: List<Trip>)
 
     @Delete
     suspend fun deleteTrip(trip: Trip)

@@ -69,16 +69,14 @@ class AuthRepository(private val context: Context) {
     private suspend fun syncUser(user: SyncedUser) {
         val currentUser = userDao.getUser()
         if (currentUser == null) {
-            userDao.insertUser(user)
+            Sync.syncRoomDbFromFirebase(context, user.id) // Sync data from Firebase to Room DB
             return
         }
 
         if (currentUser.id == user.id) {
             return
         } else {
-            userDao.deleteUser(currentUser)
-            userDao.insertUser(user)
-            // todo handle firestore to room sync
+            Sync.syncRoomDbFromFirebase(context, user.id) // Sync data from Firebase to Room DB
         }
     }
 

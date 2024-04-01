@@ -10,4 +10,7 @@ interface RoomActivityDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertRoomActivity(roomActivity: RoomActivity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertRoomActivities(roomActivities: List<RoomActivity>)
 }

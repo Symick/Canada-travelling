@@ -52,7 +52,7 @@ class TripRepository(context: Context) {
         tripActivityDao.insertTripActivity(TripActivity(trip.tripId, activity.activityId, date))
         val count = tripDao.getActivitiesForTripCount(trip.tripId)
         if (count == 1) {
-            tripDao.updateTrip(trip.copy(imageUrl = activity.imageUrl))
+            tripDao.updateTrip(trip.copy(imageUrl = activity.imageUrl, updatedAt = Date()))
         }
     }
 

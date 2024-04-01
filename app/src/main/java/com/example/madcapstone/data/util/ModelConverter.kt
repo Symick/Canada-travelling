@@ -50,5 +50,16 @@ class ModelConverter {
                 createdAt = roomTrip.createdAt
             )
         }
+
+        fun convertToRoomTrip(firestoreTrip: FirestoreTrip) : Trip {
+            return Trip(
+                tripId = firestoreTrip.tripId,
+                title = firestoreTrip.title,
+                imageUrl = firestoreTrip.imageUrl,
+                startDate = firestoreTrip.startDate,
+                endDate = firestoreTrip.endDate,
+                createdAt = firestoreTrip.createdAt
+            )
+        }
     }
 }

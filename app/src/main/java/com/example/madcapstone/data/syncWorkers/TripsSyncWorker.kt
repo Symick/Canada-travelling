@@ -29,8 +29,6 @@ class TripsSyncWorker(appContext: Context, params: WorkerParameters): CoroutineW
             Log.d("TripsSyncWorker", "Error syncing trips to firebase: ${e.message}")
             Result.failure()
         }
-
-
     }
 }
 

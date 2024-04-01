@@ -24,9 +24,9 @@ import java.util.Date
     ]
 )
 data class TripActivity(
-    val tripId: String,
-    val activityId: String,
-    val date: Date,
+    val tripId: String = "",
+    val activityId: String = "",
+    val date: Date = Date(),
     val createdAt: Date = Date(),
     val updatedAt: Date = Date()
 )
