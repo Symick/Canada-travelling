@@ -73,4 +73,6 @@
     <string name="error_fetching_data">Sorry something went wrong trying to find you the best activities.</string>
     <string name="label_recently_viewed">Last viewed</string>
     <string name="label_top_activities">Most popular Activities on Canada Traveling</string>
+    <string name="profile">Profile</string>
+    <string name="sign_out">Sign out</string>
 </resources>

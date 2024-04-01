@@ -1,6 +1,7 @@
 package com.example.madcapstone.ui.screens
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -9,9 +10,11 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -19,7 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.madcapstone.R
@@ -32,10 +37,16 @@ import com.example.madcapstone.viewmodels.HomeViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun HomeScreen(homeViewModel: HomeViewModel, activityViewModel: ActivityViewModel, navigateTo: (String) -> Unit){
+fun HomeScreen(
+    homeViewModel: HomeViewModel,
+    activityViewModel: ActivityViewModel,
+    navigateTo: (String) -> Unit
+) {
     Scaffold(topBar = {
         CenterAlignedTopAppBar(
-            title = { Text(stringResource(R.string.screen_label_home)) },
+            title = { Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(painterResource(id = Screens.HomeScreen.icon!!), contentDescription = "home")
+                Text(stringResource(Screens.HomeScreen.stringDisplayId!!)) } },
             colors = customTopAppBarColor(),
         )
     }) {
@@ -44,11 +55,17 @@ fun HomeScreen(homeViewModel: HomeViewModel, activityViewModel: ActivityViewMode
 }
 
 @Composable
-private fun ScreenContent(modifier: Modifier, homeViewModel: HomeViewModel, activityViewModel: ActivityViewModel, navigateTo: (String) -> Unit) {
+private fun ScreenContent(
+    modifier: Modifier,
+    homeViewModel: HomeViewModel,
+    activityViewModel: ActivityViewModel,
+    navigateTo: (String) -> Unit
+) {
     Column(
         modifier
             .padding(16.dp)
-            .verticalScroll(rememberScrollState())) {
+            .verticalScroll(rememberScrollState())
+    ) {
         val topActivities by homeViewModel.topActivities.observeAsState(initial = Resource.Initial())
 
 
@@ -84,7 +101,10 @@ private fun ScreenContent(modifier: Modifier, homeViewModel: HomeViewModel, acti
 }
 
 @Composable
-private fun DisplayTopActivities(activities: Resource<List<FirestoreActivity>>, onClick: (FirestoreActivity) -> Unit) {
+private fun DisplayTopActivities(
+    activities: Resource<List<FirestoreActivity>>,
+    onClick: (FirestoreActivity) -> Unit
+) {
     when (activities) {
         is Resource.Loading -> {
             CircularProgressIndicator()
@@ -110,7 +130,10 @@ private fun DisplayTopActivities(activities: Resource<List<FirestoreActivity>>, 
 }
 
 @Composable
-private fun DisplayPlaceRecommendations(activities: Resource<List<FirestoreActivity>>, onClick: (FirestoreActivity) -> Unit) {
+private fun DisplayPlaceRecommendations(
+    activities: Resource<List<FirestoreActivity>>,
+    onClick: (FirestoreActivity) -> Unit
+) {
     when (activities) {
         is Resource.Loading -> {
             CircularProgressIndicator()
@@ -119,7 +142,7 @@ private fun DisplayPlaceRecommendations(activities: Resource<List<FirestoreActiv
         is Resource.Success -> {
             LazyRow {
                 items(activities.data!!) { activity ->
-                    SmallActivityCard(activity = activity, onClick = { onClick(activity)})
+                    SmallActivityCard(activity = activity, onClick = { onClick(activity) })
                     Spacer(modifier = Modifier.width(16.dp))
                 }
             }
@@ -136,7 +159,10 @@ private fun DisplayPlaceRecommendations(activities: Resource<List<FirestoreActiv
 }
 
 @Composable
-private fun DisplayRecentlyViewed(activities: Resource<List<FirestoreActivity>>, onClick: (FirestoreActivity) -> Unit){
+private fun DisplayRecentlyViewed(
+    activities: Resource<List<FirestoreActivity>>,
+    onClick: (FirestoreActivity) -> Unit
+) {
     when (activities) {
         is Resource.Loading -> {
             Text(
@@ -161,7 +187,10 @@ private fun DisplayRecentlyViewed(activities: Resource<List<FirestoreActivity>>,
         }
 
         is Resource.Error -> {
-            Text(stringResource(R.string.label_recently_viewed), style = MaterialTheme.typography.headlineSmall)
+            Text(
+                stringResource(R.string.label_recently_viewed),
+                style = MaterialTheme.typography.headlineSmall
+            )
 
             Text(text = stringResource(R.string.error_fetching_data))
         }
@@ -169,7 +198,8 @@ private fun DisplayRecentlyViewed(activities: Resource<List<FirestoreActivity>>,
         is Resource.Empty -> {
             Text(text = "empty")
         }
-        else ->{
+
+        else -> {
             Text(text = "initial")
         }
     }

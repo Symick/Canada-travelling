@@ -3,6 +3,7 @@ package com.example.madcapstone.ui.screens.trips
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -50,7 +51,9 @@ import com.example.madcapstone.viewmodels.TripViewModel
 fun TripsListScreen(navigateTo: (String) -> Unit, viewModel: TripViewModel) {
     Scaffold(topBar = {
         CenterAlignedTopAppBar(
-            title = { Text(stringResource(R.string.screen_label_trips)) },
+            title = { Row(verticalAlignment = Alignment.CenterVertically) {
+                Icon(painterResource(id = Screens.TripsListScreen.icon!!), contentDescription = "home")
+                Text(stringResource(Screens.TripsListScreen.stringDisplayId!!)) } },
             colors = customTopAppBarColor()
         )
     }) {
