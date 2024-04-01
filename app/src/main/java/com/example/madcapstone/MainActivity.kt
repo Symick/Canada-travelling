@@ -112,7 +112,13 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
                 }
             }
         }
-        composable(Screens.TripActivitiesScreen.route) {
+        composable(
+            Screens.TripActivitiesScreen.route,
+            enterTransition = { NavigationAnimations.moveInFromRight() },
+            exitTransition = { NavigationAnimations.moveOutToRight() },
+            popEnterTransition = { NavigationAnimations.moveInFromRight() },
+            popExitTransition = { NavigationAnimations.moveOutToRight() }
+        ) {
             ActivityScreen(
                 tripDetailViewModel = tripDetailViewModel,
                 navigateUp = { nc.popBackStack() })
@@ -126,7 +132,13 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
                 }
             }
         }
-        composable(Screens.TripsDetailScreen.route) {
+        composable(
+            Screens.TripsDetailScreen.route,
+            enterTransition = { NavigationAnimations.moveInFromRight() },
+            exitTransition = { NavigationAnimations.moveOutToRight() },
+            popEnterTransition = { NavigationAnimations.moveInFromRight() },
+            popExitTransition = { NavigationAnimations.moveOutToRight() }
+        ) {
             TripsDetailScreen(
                 navigateUp = { nc.popBackStack() },
                 navigateTo = { nc.navigate(it) },
@@ -135,14 +147,26 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
             )
         }
 
-        composable(Screens.SignInScreen.route) {
+        composable(
+            Screens.SignInScreen.route,
+            enterTransition = { NavigationAnimations.moveInFromRight() },
+            exitTransition = { NavigationAnimations.moveOutToRight() },
+            popEnterTransition = { NavigationAnimations.moveInFromRight() },
+            popExitTransition = { NavigationAnimations.moveOutToRight() }
+        ) {
             SignInScreen(
                 navigateUp = { nc.popBackStack() },
                 navigateTo = { nc.navigate(it) },
                 viewModel = authViewModel
             )
         }
-        composable(Screens.SignUpScreen.route) {
+        composable(
+            Screens.SignUpScreen.route,
+            enterTransition = { NavigationAnimations.moveInFromRight() },
+            exitTransition = { NavigationAnimations.moveOutToRight() },
+            popEnterTransition = { NavigationAnimations.moveInFromRight() },
+            popExitTransition = { NavigationAnimations.moveOutToRight() }
+        ) {
             SignUpScreen(
                 viewModel = authViewModel,
                 navigateUp = { nc.popBackStack() },

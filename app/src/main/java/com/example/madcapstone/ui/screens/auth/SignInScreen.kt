@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -114,13 +115,13 @@ private fun ScreenContent(
         Text(stringResource(R.string.welcome_back), style = MaterialTheme.typography.headlineMedium)
 
         //google login button
-        Button(
+        ElevatedButton(
             enabled = authState !is Resource.Loading,
             onClick = {
                 //check for internet connection
                 if (!Utils.hasInternetConnection(context)) {
                     Utils.showToast(context, "No internet connection")
-                    return@Button
+                    return@ElevatedButton
                 }
                 // Configure Google Sign In
                 val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
