@@ -3,13 +3,8 @@ package com.example.madcapstone
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -22,9 +17,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.work.OneTimeWorkRequest
-import androidx.work.WorkRequest
-import com.example.madcapstone.data.syncWorkers.TripsSyncWorker
 import com.example.madcapstone.ui.components.CanadaTripsBottomBar
 import com.example.madcapstone.ui.screens.AccountScreen
 import com.example.madcapstone.ui.screens.ActivityScreen
@@ -74,6 +66,11 @@ class MainActivity : ComponentActivity() {
         super.onStop()
         Sync.syncTripsToFirebase(applicationContext)
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Sync.syncTripsToFirebase(applicationContext)
+    }
 }
 
 @Composable
@@ -87,18 +84,22 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
         composable(Screens.ExploreScreen.route) {
             ExploreScreen(
                 activityViewModel,
-                navigateTo = { nc.navigate(Screens.ActivityDetailScreen.route) },
+                navigateTo = { nc.navigate(it) },
                 tripViewModel = tripViewModel
             )
         }
         composable(
             Screens.ActivityDetailScreen.route,
-            enterTransition = {NavigationAnimations.moveInFromRight()},
-            exitTransition = {NavigationAnimations.moveOutToRight()},
-            popEnterTransition = {NavigationAnimations.moveInFromRight()},
-            popExitTransition = {NavigationAnimations.moveOutToRight()}
+            enterTransition = { NavigationAnimations.moveInFromRight() },
+            exitTransition = { NavigationAnimations.moveOutToRight() },
+            popEnterTransition = { NavigationAnimations.moveInFromRight() },
+            popExitTransition = { NavigationAnimations.moveOutToRight() }
         ) {
-            ActivityScreen(viewModel = activityViewModel, navigateUp = { nc.popBackStack() }, tripViewModel = tripViewModel)
+            ActivityScreen(
+                viewModel = activityViewModel,
+                navigateUp = { nc.popBackStack() },
+                tripViewModel = tripViewModel,
+                navigateTo = { nc.navigate(it) })
         }
         composable(Screens.TripsListScreen.route) {
             if (Firebase.auth.currentUser != null) {
@@ -110,7 +111,9 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
             }
         }
         composable(Screens.TripActivitiesScreen.route) {
-            ActivityScreen(tripDetailViewModel = tripDetailViewModel, navigateUp = { nc.popBackStack() })
+            ActivityScreen(
+                tripDetailViewModel = tripDetailViewModel,
+                navigateUp = { nc.popBackStack() })
         }
         composable(Screens.AccountScreen.route) {
             if (Firebase.auth.currentUser != null) {
@@ -126,7 +129,9 @@ private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
                 navigateUp = { nc.popBackStack() },
                 navigateTo = { nc.navigate(it) },
                 tripViewModel = tripViewModel,
-                detailViewModel = tripDetailViewModel) }
+                detailViewModel = tripDetailViewModel
+            )
+        }
 
         composable(Screens.SignInScreen.route) {
             SignInScreen(

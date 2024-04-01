@@ -1,5 +1,6 @@
 package com.example.madcapstone.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -59,6 +61,8 @@ import com.example.madcapstone.ui.components.utils.RatingBar
 import com.example.madcapstone.ui.theme.customTopAppBarColor
 import com.example.madcapstone.viewmodels.ActivityViewModel
 import com.example.madcapstone.viewmodels.TripViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -177,10 +181,15 @@ private fun ScreenContent(
 
         val activities by viewModel.activities.observeAsState(initial = Resource.Initial())
         if (!searchActive && activities !is Resource.Initial) {
-            ActivityList(activities, onClick = {
-                viewModel.setSelectedActivity(it)
-                navigateTo(Screens.ActivityDetailScreen.route)
-            }, tripViewModel)
+            ActivityList(
+                activities,
+                onClick = {
+                    viewModel.setSelectedActivity(it)
+                    navigateTo(Screens.ActivityDetailScreen.route)
+                },
+                tripViewModel,
+                navigateTo = navigateTo
+            )
         }
     }
 }
@@ -327,7 +336,8 @@ private fun FilterForm(
 fun ActivityList(
     activityList: Resource<List<FirestoreActivity>>,
     onClick: (FirestoreActivity) -> Unit,
-    tripViewModel: TripViewModel
+    tripViewModel: TripViewModel,
+    navigateTo: (String) -> Unit
 ) {
     LazyColumn {
         if (activityList is Resource.Success) {
@@ -338,9 +348,16 @@ fun ActivityList(
                 val isHearted = tripCount > 0 && tripsWithoutActivity.isNullOrEmpty()
                 var showTripBottomSheet by remember { mutableStateOf(false) }
                 var showAddActivityBottomSheet by remember { mutableStateOf(false) }
+                val currentUser = Firebase.auth.currentUser
                 ExploreActivityCard(
-                    activity = activity, onClick = { onClick(activity) },
+                    activity = activity, onClick = {
+                        onClick(activity)
+                                                   },
                     onHearted = {
+                        if (currentUser == null) {
+                            navigateTo(Screens.SignInScreen.route)
+                            return@ExploreActivityCard
+                        }
                         if (isHearted) return@ExploreActivityCard
                         if (tripCount > 0) {
                             showAddActivityBottomSheet = true
@@ -364,7 +381,7 @@ fun ActivityList(
                 if (showAddActivityBottomSheet) {
                     AddActivityBottomSheet(
                         onDismissRequest = { showAddActivityBottomSheet = false },
-                        trips = tripsWithoutActivity?: emptyList(),
+                        trips = tripsWithoutActivity ?: emptyList(),
                         onActivityAdd = { trip, date ->
                             tripViewModel.addActivityToTrip(
                                 trip,

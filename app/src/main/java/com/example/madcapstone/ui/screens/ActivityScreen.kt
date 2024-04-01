@@ -58,18 +58,21 @@ import com.example.madcapstone.utils.Utils
 import com.example.madcapstone.viewmodels.ActivityViewModel
 import com.example.madcapstone.viewmodels.TripDetailViewModel
 import com.example.madcapstone.viewmodels.TripViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun ActivityScreen(
     tripViewModel: TripViewModel,
     viewModel: ActivityViewModel,
-    navigateUp: () -> Unit
+    navigateUp: () -> Unit,
+    navigateTo: (String) -> Unit
 ) {
     var showAddActivityModel by remember { mutableStateOf(false) }
     var showCreateTripModel by remember { mutableStateOf(false) }
     val activity = viewModel.selectedActivity
-    val tripCount by tripViewModel.tripsCount.observeAsState()
+    val tripCount by tripViewModel.tripsCount.observeAsState(initial = 0)
     val trips by tripViewModel.getTripsWithoutActivity(activity.id).observeAsState()
     Scaffold(
         topBar = {
@@ -94,8 +97,13 @@ fun ActivityScreen(
                         )
                     }
 
-                    val hearted = trips.isNullOrEmpty()
+                    val hearted = tripCount > 0 && trips.isNullOrEmpty()
+                    val currentUser = Firebase.auth.currentUser
                     IconButton(onClick = {
+                        if  (currentUser == null) {
+                            navigateTo(Screens.SignInScreen.route)
+                            return@IconButton
+                        }
                         if (hearted) return@IconButton
                         if (tripCount == 0) {
                             showCreateTripModel = true
