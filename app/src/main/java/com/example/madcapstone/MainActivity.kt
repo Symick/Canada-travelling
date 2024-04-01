@@ -32,6 +32,7 @@ import com.example.madcapstone.utils.NavigationAnimations
 import com.example.madcapstone.utils.Sync
 import com.example.madcapstone.viewmodels.ActivityViewModel
 import com.example.madcapstone.viewmodels.AuthViewModel
+import com.example.madcapstone.viewmodels.HomeViewModel
 import com.example.madcapstone.viewmodels.TripDetailViewModel
 import com.example.madcapstone.viewmodels.TripViewModel
 import com.google.firebase.Firebase
@@ -75,12 +76,13 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun CanadaTripsNavHost(nc: NavHostController, modifier: Modifier) {
+    val homeViewModel: HomeViewModel = viewModel()
     val authViewModel: AuthViewModel = viewModel()
     val activityViewModel: ActivityViewModel = viewModel()
     val tripViewModel: TripViewModel = viewModel()
     val tripDetailViewModel: TripDetailViewModel = viewModel()
     NavHost(navController = nc, startDestination = Screens.HomeScreen.route, modifier = modifier) {
-        composable(Screens.HomeScreen.route) { HomeScreen() }
+        composable(Screens.HomeScreen.route) { HomeScreen(homeViewModel, activityViewModel, navigateTo = {nc.navigate(it)}) }
         composable(Screens.ExploreScreen.route) {
             ExploreScreen(
                 activityViewModel,

@@ -173,6 +173,7 @@ private fun ScreenContent(
             SearchMenuList(cities, onClick = {
                 viewModel.onQueryChange(it)
                 viewModel.getActivities(it, filterState)
+                viewModel.savePlaceRecommendation(it)
                 searchActive = false
             }, searchQuery)
         }
@@ -185,6 +186,7 @@ private fun ScreenContent(
                 activities,
                 onClick = {
                     viewModel.setSelectedActivity(it)
+                    viewModel.addActivityRecommendation(it.id)
                     navigateTo(Screens.ActivityDetailScreen.route)
                 },
                 tripViewModel,

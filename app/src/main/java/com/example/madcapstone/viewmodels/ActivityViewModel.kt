@@ -1,23 +1,30 @@
 package com.example.madcapstone.viewmodels
 
+import android.app.Application
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.madcapstone.data.datastore.RecommendationsDataStore
 import com.example.madcapstone.data.models.firebaseModels.City
 import com.example.madcapstone.data.models.firebaseModels.FirestoreActivity
 import com.example.madcapstone.data.util.Resource
 import com.example.madcapstone.repository.ActivityRepository
 import com.example.madcapstone.state.SearchFilterState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class)
-class ActivityViewModel : ViewModel() {
+class ActivityViewModel(application: Application) : AndroidViewModel(application) {
     private val activityRepository = ActivityRepository()
+    private val dataStore = RecommendationsDataStore(application)
+    private val scope = CoroutineScope(Dispatchers.IO)
 
     // cities as live data to observe changes from firestore
     private val _cities = MutableLiveData<Resource<List<City>>>(Resource.Initial())
@@ -41,7 +48,7 @@ class ActivityViewModel : ViewModel() {
      */
     init {
         viewModelScope.launch {
-            _searchQuery.debounce(500L).collect() {
+            _searchQuery.debounce(500L).collect {
                 searchCities(it)
             }
         }
@@ -86,6 +93,18 @@ class ActivityViewModel : ViewModel() {
 
     fun resetActivities() {
         _activities.value = Resource.Initial()
+    }
+
+    fun savePlaceRecommendation(place: String) {
+        scope.launch {
+            dataStore.savePlaceRecommendation(place)
+        }
+    }
+
+    fun addActivityRecommendation(activity: String) {
+        scope.launch {
+            dataStore.addActivityRecommendation(activity)
+        }
     }
 
 }

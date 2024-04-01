@@ -1,12 +1,13 @@
 package com.example.madcapstone.repository
 
+import android.util.Log
 import com.example.madcapstone.data.models.firebaseModels.City
 import com.example.madcapstone.data.models.firebaseModels.FirestoreActivity
 import com.example.madcapstone.data.util.Resource
 import com.example.madcapstone.state.SearchFilterState
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.QueryDocumentSnapshot
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.toObject
 import kotlinx.coroutines.tasks.await
@@ -51,6 +52,59 @@ class ActivityRepository {
         return Resource.Success(cities)
     }
 
+    suspend fun getViewedActivities(ids: Set<String>): Resource<List<FirestoreActivity>> {
+        val activities = mutableListOf<FirestoreActivity>()
+        try {
+           val query = store.collection("activities")
+                .whereIn(FieldPath.documentId(), ids.toList())
+                .get()
+                .await()
+
+            for (document in query.documents) {
+                val activity = document.toObject(FirestoreActivity::class.java)
+                activity?.let {
+                    activities.add(it)
+                }
+            }
+        } catch (e: Exception) {
+            return Resource.Error(
+                e.localizedMessage ?: "An unknown error occurred while fetching viewed activities."
+            )
+        }
+
+        if (activities.isEmpty()) {
+            return Resource.Empty()
+        }
+        return Resource.Success(activities)
+    }
+
+   suspend fun getTopActivities(): Resource<List<FirestoreActivity>>{
+        val activities = mutableListOf<FirestoreActivity>()
+        try {
+            val query = store.collection("activities")
+                .orderBy("monthlyVisitors", Query.Direction.DESCENDING)
+                .limit(10)
+                .get()
+                .await()
+
+            for (document in query.documents) {
+                val activity = document.toObject(FirestoreActivity::class.java)
+                activity?.let {
+                    activities.add(it)
+                }
+            }
+        } catch (e: Exception) {
+            return Resource.Error(
+                e.localizedMessage ?: "An unknown error occurred while fetching top activities."
+            )
+        }
+
+        if (activities.isEmpty()) {
+            return Resource.Empty()
+        }
+        return Resource.Success(activities)
+   }
+
     suspend fun getActivities(activityName: String): Resource<List<FirestoreActivity>> {
         if (activityName.isBlank()) {
             return Resource.Initial()
@@ -86,15 +140,16 @@ class ActivityRepository {
     }
 
 
-    suspend fun getActivities(cityName: String, filters: SearchFilterState): Resource<List<FirestoreActivity>> {
+    suspend fun getActivities(cityName: String, filters: SearchFilterState, limit: Long = 10): Resource<List<FirestoreActivity>> {
         if (cityName.isBlank()) {
             return Resource.Initial()
         }
+        Log.d("ActivityRepository", "Getting activities for $cityName")
         val activities = mutableListOf<FirestoreActivity>()
         try {
             var query = activityRef
                 .whereEqualTo("Location", cityName)
-                .limit(10)
+                .limit(limit)
 
             query = applyFilters(query, filters)
 

@@ -49,7 +49,7 @@
     <string name="trips">Trips</string>
     <string name="no_trips">No trips yet! \n Get started by creating new trips</string>
     <string name="create_trip">Create trip</string>
-    <string name="trip_name_label">Trip name\n</string>
+    <string name="trip_name_label">Trip name</string>
     <string name="travel_date_label">Travel Dates</string>
     <string name="start_date">Start Date</string>
     <string name="save">Save</string>
@@ -62,11 +62,15 @@
     <string name="add_activity">Add activity</string>
     <string name="edit_activity">Edit activity</string>
     <string name="select_trip">Select trip</string>
-    <string name="no_activities_on_this_day">There are no activities to visite on this day.</string>
+    <string name="no_activities_on_this_day">There are no activities to visited on this day.</string>
     <string name="delete_activity">Deleting Activity</string>
     <string name="delete_activity_message">Are you sure you want to delete %s from %s</string>
     <string name="general_information">General information</string>
     <string name="website">Website</string>
     <string name="address">Adress</string>
     <string name="search_error">Something went wrong when searching</string>
+    <string name="label_place_recommendations">Interesting activities to visit in %s</string>
+    <string name="error_fetching_data">Sorry something went wrong trying to find you the best activities.</string>
+    <string name="label_recently_viewed">Last viewed</string>
+    <string name="label_top_activities">Most popular Activities on Canada Traveling</string>
 </resources>

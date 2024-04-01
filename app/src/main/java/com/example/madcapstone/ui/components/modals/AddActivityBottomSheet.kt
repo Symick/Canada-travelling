@@ -196,6 +196,8 @@ fun AddActivityBottomSheet(
                 onClick = {
                     if (selectedActivity != null) {
                         onActivityAdd(selectedActivity!!)
+                        tripDetailViewModel.onQueryChange("")
+                        selectedActivity = null
                     }
                 }
             ) {

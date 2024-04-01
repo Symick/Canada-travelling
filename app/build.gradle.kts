@@ -84,6 +84,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
+    implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.android.gms:play-services-auth:21.0.0")
 
     //coil
@@ -91,6 +92,9 @@ dependencies {
 
     //WorkManager
     implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+    //datastore
+    implementation ("androidx.datastore:datastore-preferences:1.0.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
