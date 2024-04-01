@@ -35,6 +35,13 @@ import com.example.madcapstone.viewmodels.AuthViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
+/**
+ * Account screen.
+ *
+ * @param viewModel The authentication view model
+ * @param navigateTo The function to navigate to a screen
+ * @author Julian Kruithof
+ */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun AccountScreen(viewModel: AuthViewModel, navigateTo: (String) -> Unit){
@@ -50,6 +57,13 @@ fun AccountScreen(viewModel: AuthViewModel, navigateTo: (String) -> Unit){
     }
 }
 
+/**
+ * The content of the account screen.
+ *
+ * @param modifier The modifier
+ * @param viewModel The authentication view model
+ * @param navigateTo The function to navigate to a screen
+ */
 @Composable
 private fun ScreenContent(modifier: Modifier, viewModel: AuthViewModel, navigateTo: (String) -> Unit){
     val user = Firebase.auth.currentUser

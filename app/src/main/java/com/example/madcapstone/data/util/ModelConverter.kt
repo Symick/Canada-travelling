@@ -5,9 +5,22 @@ import com.example.madcapstone.data.models.firebaseModels.FirestoreTrip
 import com.example.madcapstone.data.models.roomModels.RoomActivity
 import com.example.madcapstone.data.models.roomModels.Trip
 
+/**
+ * Class for converting Firestore models to Room models and vice versa.
+ *
+ * @author Julian Kruithof
+ */
 class ModelConverter {
-    companion object{
-        fun convertToRoomActivity(firestoreActivity: FirestoreActivity) :RoomActivity {
+    companion object {
+
+        /**
+         * Converts a FirestoreActivity to a RoomActivity
+         *
+         * @param firestoreActivity The FirestoreActivity to convert
+         *
+         *  @return The RoomActivity
+         */
+        fun convertToRoomActivity(firestoreActivity: FirestoreActivity): RoomActivity {
             return RoomActivity(
                 activityId = firestoreActivity.id,
                 name = firestoreActivity.name,
@@ -23,7 +36,14 @@ class ModelConverter {
             )
         }
 
-        fun convertToFirestoreActivity(roomActivity: RoomActivity) :FirestoreActivity {
+        /**
+         * Converts a RoomActivity to a FirestoreActivity
+         *
+         * @param roomActivity The RoomActivity to convert
+         *
+         * @return The FirestoreActivity
+         */
+        fun convertToFirestoreActivity(roomActivity: RoomActivity): FirestoreActivity {
             return FirestoreActivity(
                 id = roomActivity.activityId,
                 name = roomActivity.name,
@@ -39,7 +59,15 @@ class ModelConverter {
             )
         }
 
-        fun convertToFirestoreTrip(roomTrip: Trip, userId: String) : FirestoreTrip {
+        /**
+         * Converts a RoomTrip to a FirestoreTrip
+         *
+         * @param roomTrip The RoomTrip to convert
+         * @param userId The id of the user that owns the trip
+         *
+         * @return The FirestoreTrip
+         */
+        fun convertToFirestoreTrip(roomTrip: Trip, userId: String): FirestoreTrip {
             return FirestoreTrip(
                 tripId = roomTrip.tripId,
                 userId = userId,
@@ -51,7 +79,14 @@ class ModelConverter {
             )
         }
 
-        fun convertToRoomTrip(firestoreTrip: FirestoreTrip) : Trip {
+        /**
+         * Converts a FirestoreTrip to a RoomTrip
+         *
+         * @param firestoreTrip The FirestoreTrip to convert
+         *
+         * @return The RoomTrip
+         */
+        fun convertToRoomTrip(firestoreTrip: FirestoreTrip): Trip {
             return Trip(
                 tripId = firestoreTrip.tripId,
                 title = firestoreTrip.title,

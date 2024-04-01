@@ -13,15 +13,31 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
+/**
+ * Text divider component with text in the middle.
+ *
+ * @param text The text
+ * @param modifier The modifier
+ * @param thickness The thickness
+ * @author Julian Kruithof
+ */
 @Composable
 fun TextDivider(text: String, modifier: Modifier = Modifier, thickness: Dp = 1.dp) {
     Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Divider(thickness = thickness, modifier = Modifier.weight(1f).clip(
-            RoundedCornerShape(topStartPercent = 50, bottomStartPercent = 50)
-        ))
+        Divider(
+            thickness = thickness, modifier = Modifier
+                .weight(1f)
+                .clip(
+                    RoundedCornerShape(topStartPercent = 50, bottomStartPercent = 50)
+                )
+        )
         Text(text = text, modifier = Modifier.padding(horizontal = 8.dp))
-        Divider(thickness = thickness, modifier = Modifier.weight(1f).clip(
-            RoundedCornerShape(topEndPercent = 50, bottomEndPercent = 50)
-        ))
+        Divider(
+            thickness = thickness, modifier = Modifier
+                .weight(1f)
+                .clip(
+                    RoundedCornerShape(topEndPercent = 50, bottomEndPercent = 50)
+                )
+        )
     }
 }

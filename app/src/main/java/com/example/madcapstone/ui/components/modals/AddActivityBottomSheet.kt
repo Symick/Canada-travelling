@@ -49,6 +49,15 @@ import com.example.madcapstone.viewmodels.TripDetailViewModel
 import java.util.Date
 
 
+/**
+ * Bottom sheet to add an activity to a trip.
+ *
+ * @param onDismissRequest The function to call when the bottom sheet is dismissed
+ * @param trips The list of trips
+ * @param onActivityAdd The function to call when an activity is added
+ *
+ * @Author Julian Kruithof
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddActivityBottomSheet(
@@ -124,6 +133,16 @@ fun AddActivityBottomSheet(
     }
 }
 
+
+/**
+ * Bottom sheet to add an activity to a trip.
+ *
+ * @param onDismissRequest The function to call when the bottom sheet is dismissed
+ * @param tripDetailViewModel The TripDetailViewModel
+ * @param onActivityAdd The function to call when an activity is added
+ *
+ * @Author Julian Kruithof
+ */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun AddActivityBottomSheet(
@@ -207,6 +226,15 @@ fun AddActivityBottomSheet(
     }
 }
 
+/**
+ * Function to display the list of activities.
+ *
+ * @param activities The list of activities
+ * @param onActivitySelected The function to call when an activity is selected
+ * @param query The search query
+ *
+ * @Author Julian Kruithof
+ */
 @Composable
 private fun SearchMenuList(
     activities: Resource<List<FirestoreActivity>>,

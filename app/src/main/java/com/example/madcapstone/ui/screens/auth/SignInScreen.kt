@@ -52,6 +52,15 @@ import com.example.madcapstone.viewmodels.AuthViewModel
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 
+/**
+ * Sign in screen.
+ *
+ * @param navigateUp The function to navigate up
+ * @param navigateTo The function to navigate to a screen
+ * @param viewModel The authentication view model
+ *
+ *@author Julian Kruithof
+ */
 @Composable
 fun SignInScreen(navigateUp: () -> Unit, navigateTo: (String) -> Unit, viewModel: AuthViewModel) {
     Scaffold(topBar = {
@@ -67,6 +76,13 @@ fun SignInScreen(navigateUp: () -> Unit, navigateTo: (String) -> Unit, viewModel
     }
 }
 
+/**
+ * The content of the sign in screen.
+ *
+ * @param modifier The modifier
+ * @param navigateTo The function to navigate to a screen
+ * @param viewModel The authentication view model
+ */
 @Composable
 private fun ScreenContent(
     modifier: Modifier,
@@ -172,6 +188,12 @@ private fun ScreenContent(
     }
 }
 
+/**
+ * The sign in form.
+ *
+ * @param authState The authentication state
+ * @param signIn The sign in function
+ */
 @Composable
 private fun SignInForm(
     authState: Resource<Boolean>?,

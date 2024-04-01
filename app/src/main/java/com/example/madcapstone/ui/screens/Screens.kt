@@ -3,6 +3,13 @@ package com.example.madcapstone.ui.screens
 import androidx.annotation.StringRes
 import com.example.madcapstone.R
 
+/**
+ * The screens of the application.
+ *
+ * @param route The route
+ * @param icon The icon
+ * @param stringDisplayId The string display id
+ */
 sealed class Screens(
     val route: String,
     val icon: Int? = null,

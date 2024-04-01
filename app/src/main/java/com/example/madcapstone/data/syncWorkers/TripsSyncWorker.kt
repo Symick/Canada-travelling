@@ -13,10 +13,26 @@ import com.example.madcapstone.data.models.roomModels.Trip
 import com.example.madcapstone.data.models.roomModels.TripActivity
 import com.example.madcapstone.repository.SynchronisationRepository
 
+/**
+ * Worker class that syncs the local room database with the firebase database.
+ * When fired it retrieves all database changes made locally and pushes it to the firebase database.
+ *
+ * @param appContext The application context
+ * @param params The worker parameters
+ *
+ * @return Result.success() if the sync was successful, Result.failure() otherwise
+ *
+ * @author Julian Kruithof
+ */
 class TripsSyncWorker(appContext: Context, params: WorkerParameters): CoroutineWorker(appContext,
     params
 ) {
     private val syncRepo = SynchronisationRepository(appContext)
+
+    /**
+     * The work that should be done by the worker.
+     * i.e. sync local changes to firebase
+     */
     override suspend fun doWork(): Result {
         val dataToSync = syncRepo.getDataToSync()
         if (dataToSync.trips.isEmpty() && dataToSync.tripActivities.isEmpty() && dataToSync.deletedEntities.isEmpty()) {

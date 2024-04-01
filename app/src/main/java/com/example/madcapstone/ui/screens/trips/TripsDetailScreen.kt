@@ -41,6 +41,15 @@ import com.example.madcapstone.utils.Utils
 import com.example.madcapstone.viewmodels.TripDetailViewModel
 import com.example.madcapstone.viewmodels.TripViewModel
 
+/**
+ * Trips detail screen.
+ *
+ * @param navigateUp The function to navigate up
+ * @param tripViewModel The trip view model
+ * @param detailViewModel The trip detail view model
+ * @param navigateTo The function to navigate to a screen
+ * @author Julian Kruithof
+ */
 @Composable
 fun TripsDetailScreen(
     navigateUp: () -> Unit,
@@ -76,6 +85,16 @@ fun TripsDetailScreen(
     }
 }
 
+/**
+ * The content of the trips detail screen.
+ *
+ * @param modifier The modifier
+ * @param viewModel The trip view model
+ * @param detailViewModel The trip detail view model
+ * @param navigateTo The function to navigate to a screen
+ * @param modelOpened The state of the model
+ * @param closeDialog The function to close the dialog
+ */
 @Composable
 private fun ScreenContent(
     modifier: Modifier,

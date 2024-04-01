@@ -6,6 +6,17 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.example.madcapstone.repository.SynchronisationRepository
 
+/**
+ * Worker class that syncs the local room database with the firebase database.
+ * When fired it retrieves all database changes made locally and pushes it to the firebase database.
+ *
+ * @param appContext The application context
+ * @param params The worker parameters
+ *
+ * @return Result.success() if the sync was successful, Result.failure() otherwise
+ *
+ * @author Julian Kruithof
+ */
 class RoomSyncWorker(appContext: Context, params: WorkerParameters) : CoroutineWorker(
     appContext,
     params
@@ -17,6 +28,10 @@ class RoomSyncWorker(appContext: Context, params: WorkerParameters) : CoroutineW
         emptyList()
     )
 
+    /**
+     * The work that should be done by the worker.
+     * i.e. sync firebase with the local room database
+     */
     override suspend fun doWork(): Result {
         val userId = inputData.getString("userId")
         if (userId.isNullOrBlank()) {

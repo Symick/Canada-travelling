@@ -44,6 +44,13 @@ import com.example.madcapstone.data.util.ModelConverter
 import com.example.madcapstone.ui.components.utils.RatingBar
 import com.example.madcapstone.utils.Utils
 
+/**
+ * Small activity card component.
+ *
+ * @param activity The activity
+ * @param onClick The function to execute when clicked
+
+ */
 @Composable
 fun SmallActivityCard(
     activity: FirestoreActivity,
@@ -52,6 +59,13 @@ fun SmallActivityCard(
     SmallActivityCard(activity, ActivityCardType.NORMAL, onClick = onClick)
 }
 
+/**
+ * Review activity card component.
+ *
+ * @param activity The activity
+ * @param onClick The function to execute when clicked
+ * @param onReview The function to execute when reviewed
+ */
 @Composable
 fun ReviewActivityCard(
     activity: FirestoreActivity,
@@ -61,6 +75,14 @@ fun ReviewActivityCard(
     SmallActivityCard(activity, ActivityCardType.REVIEW, onClick = onClick, onReview = onReview)
 }
 
+/**
+ * Explore activity card component.
+ *
+ * @param activity The activity
+ * @param onClick The function to execute when clicked
+ * @param onHearted The function to execute when hearted
+ * @param isHearted The hearted state
+ */
 @Composable
 fun ExploreActivityCard(
     activity: FirestoreActivity,
@@ -77,6 +99,14 @@ fun ExploreActivityCard(
     )
 }
 
+/**
+ * Trip activity card component.
+ *
+ * @param activity The activity
+ * @param onClick The function to execute when clicked
+ * @param onDelete The function to execute when deleted
+ * @param onEdit The function to execute when edited
+ */
 @Composable
 fun TripActivityCard(
     activity: RoomActivity,
@@ -93,6 +123,15 @@ fun TripActivityCard(
     )
 }
 
+/**
+ * Small activity card component. used for small and review cards.
+ *
+ * @param activity The activity
+ * @param type The type of the card (small or review)
+ * @param onClick The function to execute when clicked
+ * @param onReview The function to execute when reviewed
+ *
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SmallActivityCard(
@@ -176,6 +215,18 @@ private fun SmallActivityCard(
     }
 }
 
+/**
+ * Large activity card component.
+ * Used for trip and search cards.
+ *
+ * @param activity The activity
+ * @param type The type of the card (trip or search)
+ * @param onClick The function to execute when clicked
+ * @param onDelete The function to execute when deleted
+ * @param onEdit The function to execute when edited
+ * @param onHearted The function to execute when hearted
+ * @param isHearted The hearted state
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun LargeActivityCard(
@@ -319,6 +370,9 @@ private fun LargeActivityCard(
     }
 }
 
+/**
+ * Helper function to get the price text.
+ */
 private fun getPriceText(activity: FirestoreActivity): String {
     return if (activity.isFree) "Free" else "€${Utils.formatLocalePrice(activity.minPrice)} - €${
         Utils.formatLocalePrice(
@@ -327,6 +381,9 @@ private fun getPriceText(activity: FirestoreActivity): String {
     }"
 }
 
+/**
+ * Helper function to display the monthly visitors.
+ */
 @Composable
 private fun MonthlyVisitorsDisplay(visitors: Int) {
     Row {
@@ -343,6 +400,9 @@ private fun MonthlyVisitorsDisplay(visitors: Int) {
 
 }
 
+/**
+ * Class of all the activity card types.
+ */
 private enum class ActivityCardType {
     TRIP, NORMAL, REVIEW, SEARCH
 }

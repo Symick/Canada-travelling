@@ -16,6 +16,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 
+/**
+ * View model for the trip detail screen.
+ *
+ * @param application The application
+ * @author Julian Kruithof
+ */
 @OptIn(FlowPreview::class)
 class TripDetailViewModel(application: Application) : AndroidViewModel(application) {
     private val tripActivityRepository: TripActivityRepository = TripActivityRepository(application.applicationContext)

@@ -25,6 +25,18 @@ import com.example.madcapstone.R
 import com.example.madcapstone.utils.Utils
 import java.util.Date
 
+/**
+ * Custom date picker component.
+ *
+ * @param modifier The modifier
+ * @param selectedDate The selected date
+ * @param onDateSelected The function to select a date
+ * @param hasError The error state
+ * @param minDate The minimum date
+ * @param maxDate The maximum date
+ * @param enabled The enabled state
+ * @author Julian Kruithof
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomDatePicker(
@@ -62,6 +74,7 @@ fun CustomDatePicker(
             ),
         )
     )
+    // Show the date picker dialog
     if (showDialog && enabled) {
         DatePickerDialog(
             onDismissRequest = { showDialog = false },
@@ -87,6 +100,13 @@ fun CustomDatePicker(
     }
 }
 
+/**
+ * Helper function to determine the text field color.
+ *
+ * @param hasError The error state
+ * @param enabled The enabled state
+ * @return The color of the text field
+ */
 @Composable
 private fun determineTextFieldColor(hasError: Boolean, enabled: Boolean): Color {
     return if (hasError) {

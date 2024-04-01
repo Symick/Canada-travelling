@@ -19,6 +19,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.toCollection
 import kotlinx.coroutines.launch
 
+/**
+ * View model for the home screen.
+ *
+ * @param application The application
+ * @author Julian Kruithof
+ */
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val dataStore = RecommendationsDataStore(application)
     private val activityRepository = ActivityRepository()

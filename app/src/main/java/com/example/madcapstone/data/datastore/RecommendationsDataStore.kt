@@ -8,13 +8,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.map
 
 class RecommendationsDataStore(private val context: Context) {
-    companion object {
-        private const val TAG = "RecommendationsDataStore"
-        val Context.dataStore by preferencesDataStore(name = TAG)
-        private val PLACE_RECOMMENDATION_KEY = stringPreferencesKey("place_recommendation")
-        private val ACTIVITY_RECOMMENDATION_KEY = stringSetPreferencesKey("activity_recommendation")
-        private const val MAX_ACTIVITY_RECOMMENDATIONS = 5
-    }
+
 
     suspend fun savePlaceRecommendation(place: String) {
         context.dataStore.edit { preferences ->
@@ -40,6 +34,14 @@ class RecommendationsDataStore(private val context: Context) {
 
     val activityRecommendations = context.dataStore.data.map { preferences ->
         preferences[ACTIVITY_RECOMMENDATION_KEY] ?: setOf()
+    }
+
+    companion object {
+        private const val TAG = "RecommendationsDataStore"
+        val Context.dataStore by preferencesDataStore(name = TAG)
+        private val PLACE_RECOMMENDATION_KEY = stringPreferencesKey("place_recommendation")
+        private val ACTIVITY_RECOMMENDATION_KEY = stringSetPreferencesKey("activity_recommendation")
+        private const val MAX_ACTIVITY_RECOMMENDATIONS = 5
     }
 
 

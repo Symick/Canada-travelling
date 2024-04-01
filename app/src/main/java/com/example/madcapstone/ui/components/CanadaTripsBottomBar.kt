@@ -20,7 +20,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.madcapstone.ui.screens.Screens
 
-
+/**
+ * Bottom bar for the Canada Trips app.
+ *
+ * @param navController The navigation controller
+ * @author Julian Kruithof
+ */
 @Composable
 fun CanadaTripsBottomBar(navController: NavHostController) {
     NavigationBar {

@@ -12,6 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.madcapstone.ui.theme.customTopAppBarColor
 
+/**
+ * Top bar with back navigation.
+ *
+ * @param onNavigationIconClick The function to call when the navigation icon is clicked
+ * @author Julian Kruithof
+ */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun BackNavigationTopBar(onNavigationIconClick: () -> Unit){

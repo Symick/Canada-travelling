@@ -40,6 +40,15 @@ import com.example.madcapstone.ui.screens.Screens
 import com.example.madcapstone.utils.Utils
 import com.example.madcapstone.viewmodels.AuthViewModel
 
+/**
+ * Sign up screen.
+ *
+ * @param navigateUp The function to navigate up
+ * @param navigateTo The function to navigate to a screen
+ * @param viewModel The authentication view model
+ *
+ * @author Julian Kruithof
+ */
 @Composable
 fun SignUpScreen(navigateUp: () -> Unit, navigateTo: (String) -> Unit, viewModel: AuthViewModel) {
     Scaffold(topBar = {
@@ -58,6 +67,14 @@ fun SignUpScreen(navigateUp: () -> Unit, navigateTo: (String) -> Unit, viewModel
     }
 }
 
+/**
+ * Screen content.
+ *
+ * @param modifier The modifier
+ * @param navigateUp The function to navigate up
+ * @param navigateTo The function to navigate to a screen
+ * @param viewModel The authentication view model
+ */
 @Composable
 private fun ScreenContent(modifier: Modifier, navigateUp: () -> Unit, navigateTo: (String) -> Unit, viewModel: AuthViewModel) {
     Column(
@@ -90,6 +107,12 @@ private fun ScreenContent(modifier: Modifier, navigateUp: () -> Unit, navigateTo
     }
 }
 
+/**
+ * Sign up form.
+ *
+ * @param viewModel The authentication view model
+ * @param navigateTo The function to navigate to a screen
+ */
 @Composable
 private fun SignUpForm(viewModel: AuthViewModel, navigateTo: (String) -> Unit){
     Column(Modifier.fillMaxWidth()) {

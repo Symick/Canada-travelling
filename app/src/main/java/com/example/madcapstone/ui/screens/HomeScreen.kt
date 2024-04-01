@@ -35,6 +35,14 @@ import com.example.madcapstone.ui.theme.customTopAppBarColor
 import com.example.madcapstone.viewmodels.ActivityViewModel
 import com.example.madcapstone.viewmodels.HomeViewModel
 
+/**
+ * Home screen.
+ *
+ * @param homeViewModel The home view model
+ * @param activityViewModel The activity view model
+ * @param navigateTo The function to navigate to a screen
+ * @author Julian Kruithof
+ */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun HomeScreen(
@@ -54,6 +62,14 @@ fun HomeScreen(
     }
 }
 
+/**
+ * The content of the home screen.
+ *
+ * @param modifier The modifier
+ * @param homeViewModel The home view model
+ * @param activityViewModel The activity view model
+ * @param navigateTo The function to navigate to a screen
+ */
 @Composable
 private fun ScreenContent(
     modifier: Modifier,
@@ -100,6 +116,12 @@ private fun ScreenContent(
     }
 }
 
+/**
+ * Display the top activities.
+ *
+ * @param activities The activities
+ * @param onClick The function to handle the click when an activity is clicked
+ */
 @Composable
 private fun DisplayTopActivities(
     activities: Resource<List<FirestoreActivity>>,
@@ -129,6 +151,13 @@ private fun DisplayTopActivities(
     }
 }
 
+
+/**
+ * Display the place recommendations.
+ *
+ * @param activities The activities
+ * @param onClick The function to handle the click when an activity is clicked
+ */
 @Composable
 private fun DisplayPlaceRecommendations(
     activities: Resource<List<FirestoreActivity>>,
@@ -158,6 +187,13 @@ private fun DisplayPlaceRecommendations(
     }
 }
 
+
+/**
+ * Display the recently viewed activities.
+ *
+ * @param activities The activities
+ * @param onClick The function to handle the click when an activity is clicked
+ */
 @Composable
 private fun DisplayRecentlyViewed(
     activities: Resource<List<FirestoreActivity>>,

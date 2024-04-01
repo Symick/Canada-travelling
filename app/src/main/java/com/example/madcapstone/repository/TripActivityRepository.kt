@@ -10,6 +10,16 @@ import com.example.madcapstone.data.models.roomModels.DeletedEntity
 import com.example.madcapstone.data.models.roomModels.EntityType
 import com.example.madcapstone.data.models.roomModels.TripActivity
 
+/**
+ * Repository class for the TripActivity.
+ * This class is used to handle the TripActivity objects in the local database.
+ *
+ * @property tripActivityDao The TripActivityDao
+ * @property userDao The UserDao
+ * @property deletedEntityDao The DeletedEntityDao
+ *
+ * @author Julian Kruithof
+ */
 class TripActivityRepository(context: Context) {
     private val tripActivityDao: TripActivityDao
     private val userDao: UserDao
@@ -22,15 +32,39 @@ class TripActivityRepository(context: Context) {
         deletedEntityDao = planningDatabase.deletedEntityDao()
     }
 
+    /**
+     * Function to insert a TripActivity object into the local database.
+     *
+     * @param tripActivity The TripActivity object to insert
+     */
     @Transaction
     suspend fun deleteTripActivity(tripActivity: TripActivity) {
-        if (userDao.getUser()!!.lastSync > tripActivity.createdAt){
-            deletedEntityDao.insertDeletedEntity(DeletedEntity(tripActivity.tripId, EntityType.ACTIVITY, tripActivity.activityId))
+        if (userDao.getUser()!!.lastSync > tripActivity.createdAt) {
+            deletedEntityDao.insertDeletedEntity(
+                DeletedEntity(
+                    tripActivity.tripId,
+                    EntityType.ACTIVITY,
+                    tripActivity.activityId
+                )
+            )
         }
         tripActivityDao.deleteTripActivity(tripActivity)
     }
 
-    fun getTripActivity(tripId: String, activityId: String) = tripActivityDao.getTripActivity(tripId, activityId)
+    /**
+     * Function to get a TripActivity object from the local database.
+     *
+     * @param tripId The id of the trip the activity belongs to
+     * @param activityId The id of the activity
+     */
+    fun getTripActivity(tripId: String, activityId: String) =
+        tripActivityDao.getTripActivity(tripId, activityId)
 
-    suspend fun updateTripActivity(tripActivity: TripActivity) = tripActivityDao.updateTripActivity(tripActivity)
+    /**
+     * Function to update a TripActivity object into the local database.
+     *
+     * @param tripActivity The TripActivity object to update
+     */
+    suspend fun updateTripActivity(tripActivity: TripActivity) =
+        tripActivityDao.updateTripActivity(tripActivity)
 }

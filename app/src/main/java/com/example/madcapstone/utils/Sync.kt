@@ -11,8 +11,19 @@ import androidx.work.WorkManager
 import com.example.madcapstone.data.syncWorkers.RoomSyncWorker
 import com.example.madcapstone.data.syncWorkers.TripsSyncWorker
 
+/**
+ * Class used to create sync workers.
+ *
+ * @author Julian Kruithof
+ */
 class Sync {
     companion object {
+
+        /**
+         * Sync trips to Firebase.
+         *
+         * @param context The context
+         */
         fun syncTripsToFirebase(context: Context) {
             val syncWork = "Syncing to Firebase"
             val constraints = Constraints.Builder()
@@ -24,6 +35,12 @@ class Sync {
             WorkManager.getInstance(context).enqueueUniqueWork(syncWork,ExistingWorkPolicy.REPLACE, request)
         }
 
+        /**
+         * Sync room database from Firebase.
+         *
+         * @param context The context
+         * @param userId The user id
+         */
         fun syncRoomDbFromFirebase(context: Context, userId: String) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)

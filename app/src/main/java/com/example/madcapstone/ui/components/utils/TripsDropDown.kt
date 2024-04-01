@@ -12,6 +12,18 @@ import androidx.compose.ui.res.stringResource
 import com.example.madcapstone.R
 import com.example.madcapstone.data.models.roomModels.Trip
 
+/**
+ * Dropdown component to select a trip.
+ *
+ * @param modifier The modifier
+ * @param selectedTrip The selected trip
+ * @param trips The trips
+ * @param isExpanded The expanded state
+ * @param onExpandedChange The function to change the expanded state
+ * @param onTripSelected The function to select a trip
+ * @param hasError The error state
+ * @author Julian Kruithof
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TripsDropDown(

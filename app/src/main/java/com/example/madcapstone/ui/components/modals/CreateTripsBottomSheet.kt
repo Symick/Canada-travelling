@@ -47,6 +47,14 @@ import com.example.madcapstone.utils.Utils
 import java.util.Date
 
 
+/**
+ * Bottom sheet to create a new trip.
+ *
+ * @param onDismissRequest The function to dismiss the bottom sheet
+ * @param createTrip The function to create a new trip
+ *
+ * @author Julian Kruithof
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TripsBottomSheet(onDismissRequest: () -> Unit, createTrip: (Trip) -> Unit) {

@@ -18,6 +18,17 @@ import kotlinx.coroutines.tasks.await
 import java.util.Date
 
 
+/**
+ * Repository class for the authentication.
+ * This class is used to handle the authentication of the user.
+ *
+ * @property context The application context
+ * @property auth The Firebase authentication instance
+ * @property store The Firestore database instance
+ * @property userDao The user DAO
+ *
+ * @constructor Creates a new AuthRepository
+ */
 class AuthRepository(private val context: Context) {
     private val auth: FirebaseAuth = Firebase.auth
     private val store = Firebase.firestore
@@ -28,6 +39,13 @@ class AuthRepository(private val context: Context) {
         userDao = db.userDao()
     }
 
+    /**
+     * Function to sign up a user with email and password.
+     *
+     * @param email The email of the user
+     * @param password The password of the user
+     * @return The authentication result
+     */
     suspend fun signUp(email: String, password: String): AuthResult {
         val result = auth.createUserWithEmailAndPassword(email, password).await()
         val user = SyncedUser(result.user!!.uid, Date())
@@ -35,6 +53,13 @@ class AuthRepository(private val context: Context) {
         return result
     }
 
+    /**
+     * Function to sign in a user with email and password.
+     *
+     * @param email The email of the user
+     * @param password The password of the user
+     * @return The authentication result
+     */
     suspend fun signIn(email: String, password: String): AuthResult {
         val result = auth.signInWithEmailAndPassword(email, password).await()
         val user = SyncedUser(result.user!!.uid, Date())
@@ -42,6 +67,12 @@ class AuthRepository(private val context: Context) {
         return result
     }
 
+    /**
+     * Function to sign in a user with Google.
+     *
+     * @param idToken The id token of the user
+     * @return The authentication result
+     */
     suspend fun signInWithGoogle(idToken: String): AuthResult {
         val credential = GoogleAuthProvider.getCredential(idToken, null)
         val result = auth.signInWithCredential(credential).await()
@@ -50,11 +81,21 @@ class AuthRepository(private val context: Context) {
         return result
     }
 
+    /**
+     * Function to sign out the user.
+     * After signing out the trips are synced to Firebase.
+     */
     fun signOut() {
         auth.signOut()
         Sync.syncTripsToFirebase(context = context)
     }
 
+    /**
+     * Function to update the Firebase user.
+     *
+     * @param displayName The display name of the user
+     * @param photoUrl The photo url of the user
+     */
     suspend fun updateFirebaseUser(displayName: String? = null, photoUrl: Uri? = null) {
         val user = auth.currentUser
         val profileUpdates = userProfileChangeRequest {
@@ -65,14 +106,21 @@ class AuthRepository(private val context: Context) {
 
     }
 
+    /**
+     * Function to sync the user with the Room database.
+     *
+     * @param user The user to sync
+     */
     @Transaction
     private suspend fun syncUser(user: SyncedUser) {
         val currentUser = userDao.getUser()
+        // If there is no user in the Room DB, sync the data from Firebase
         if (currentUser == null) {
             Sync.syncRoomDbFromFirebase(context, user.id) // Sync data from Firebase to Room DB
             return
         }
 
+        // If the current user is the same as the user that is being synced, return
         if (currentUser.id == user.id) {
             return
         } else {
@@ -84,6 +132,9 @@ class AuthRepository(private val context: Context) {
         auth.currentUser?.delete()
     }
 
+    /**
+     * Function to add a user to the Firestore database.
+     */
     suspend fun addUserToFirestore(
         uuid: String,
         email: String,

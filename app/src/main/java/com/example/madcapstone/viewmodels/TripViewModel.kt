@@ -12,6 +12,12 @@ import com.example.madcapstone.repository.TripRepository
 import kotlinx.coroutines.launch
 import java.util.Date
 
+/**
+ * View model for the trip screen.
+ *
+ * @param application The application
+ * @author Julian Kruithof
+ */
 class TripViewModel(application: Application): AndroidViewModel(application) {
     private val tripRepository = TripRepository(application.applicationContext)
 

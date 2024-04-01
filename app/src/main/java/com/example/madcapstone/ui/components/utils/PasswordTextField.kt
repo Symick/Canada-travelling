@@ -21,7 +21,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import com.example.madcapstone.R
 
-
+/**
+ * Password text field component.
+ *
+ * @param value The value
+ * @param onValueChange The function to change the value
+ * @param modifier The modifier
+ * @param label The label
+ * @param isError The error state
+ * @author Julian Kruithof
+ */
 @Composable
 fun PasswordTextField(
     value: String,

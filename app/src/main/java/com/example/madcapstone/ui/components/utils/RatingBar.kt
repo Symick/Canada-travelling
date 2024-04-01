@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -13,12 +12,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.madcapstone.R
 
+/**
+ * Rating bar component.
+ *
+ * @param rating The rating
+ * @param modifier The modifier
+ * @param dotsAmount The amount of dots
+ * @param reviewers The amount of reviewers
+ * @param iconSize The size of the icon
+ *
+ * @throws IllegalArgumentException If the rating is greater than the amount of dots
+ *
+ * @author Julian Kruithof
+ */
 @Composable
 fun RatingBar(
     rating: Int,
@@ -31,7 +41,7 @@ fun RatingBar(
         throw IllegalArgumentException("Rating cannot be greater than size")
     }
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
-        for (i in 1 .. dotsAmount) {
+        for (i in 1..dotsAmount) {
             Icon(
                 painterResource(
                     if (i <= rating) {
@@ -66,7 +76,7 @@ fun RatingBar(
         throw IllegalArgumentException("Rating cannot be greater than size")
     }
     Row(modifier = modifier) {
-        for (i in 1 .. dotsAmount) {
+        for (i in 1..dotsAmount) {
             Icon(
                 painterResource(
                     if (i <= rating) {

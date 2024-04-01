@@ -11,6 +11,14 @@ import androidx.compose.ui.res.stringResource
 import com.example.madcapstone.R
 import com.example.madcapstone.utils.Utils
 
+/**
+ * Custom range slider component.
+ *
+ * @param range The range
+ * @param onValueChange The function to change the value
+ * @param onValueChangeFinished The function to change the value finished
+ * @author Julian Kruithof
+ */
 @Composable
 fun CustomRangeSlider(
     range: ClosedFloatingPointRange<Float>,

@@ -35,6 +35,17 @@ import com.example.madcapstone.ui.components.utils.CustomDatePicker
 import java.util.Date
 
 
+/**
+ * Bottom sheet to edit a trip activity.
+ *
+ * @param onDismissRequest The function to dismiss the bottom sheet
+ * @param trip The trip of the activity
+ * @param initialDate The initial date of the activity
+ * @param activity The activity to edit
+ * @param onActivityEdit The function to edit the activity
+ *
+ * @author Julian Kruithof
+ */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun EditActivityBottomSheet(

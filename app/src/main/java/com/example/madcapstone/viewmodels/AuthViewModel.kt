@@ -11,6 +11,11 @@ import com.example.madcapstone.repository.AuthRepository
 import com.example.madcapstone.utils.Utils
 import kotlinx.coroutines.launch
 
+/**
+ * view model for the authentication.
+ *
+ * @author Julian Kruithof
+ */
 class AuthViewModel(private val application: Application) : AndroidViewModel(application) {
     private val authRepository = AuthRepository(context = application.applicationContext)
 

@@ -61,6 +61,15 @@ import com.example.madcapstone.viewmodels.TripViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
+/**
+ * Activity screen.
+ *
+ * @param tripViewModel The trip view model
+ * @param viewModel The activity view model
+ * @param navigateUp The function to navigate up
+ * @param navigateTo The function to navigate to a screen
+ * @author Julian Kruithof
+ */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun ActivityScreen(
@@ -151,6 +160,10 @@ fun ActivityScreen(
     }
 }
 
+
+/**
+ * The content of the activity screen. when navigating from the trip detail screen.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ActivityScreen(
@@ -199,6 +212,13 @@ fun ActivityScreen(
     }
 }
 
+/**
+ * The content of the activity screen.
+ *
+ * @param modifier The modifier
+ * @param activity The activity
+ * @param fromTrip Whether the screen is navigated from the trip detail screen
+ */
 @Composable
 private fun ScreenContent(
     modifier: Modifier,
@@ -292,6 +312,11 @@ private fun ScreenContent(
     }
 }
 
+/**
+ * Display the opening hours of the activity.
+ *
+ * @param openingHours The opening hours
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DisplayOpeningHours(openingHours: Map<String, OpeningHours>) {
@@ -331,6 +356,12 @@ private fun DisplayOpeningHours(openingHours: Map<String, OpeningHours>) {
     }
 }
 
+/**
+ * Get the price text of the activity.
+ *
+ * @param activity The activity
+ * @return The price text
+ */
 private fun getPriceText(activity: FirestoreActivity): String {
     return if (activity.isFree) "Free" else "€${Utils.formatLocalePrice(activity.minPrice)} - €${
         Utils.formatLocalePrice(
@@ -339,6 +370,12 @@ private fun getPriceText(activity: FirestoreActivity): String {
     }"
 }
 
+/**
+ * Display the opening day of the activity.
+ *
+ * @param day The day of the week
+ * @param hours The opening hours
+ */
 @Composable
 private fun DisplayOpeningDay(day: DayOfWeek, hours: OpeningHours) {
     val context = LocalContext.current
@@ -363,6 +400,12 @@ private fun DisplayOpeningDay(day: DayOfWeek, hours: OpeningHours) {
     }
 }
 
+/**
+ * Open Google Maps with the address of the activity.
+ *
+ * @param address The address
+ * @param context The context
+ */
 private fun openGoogleMaps(address: String, context: Context) {
     val gmmIntentUri = Uri.parse("google.navigation:q=$address")
     val mapIntent = Intent(Intent.ACTION_VIEW, gmmIntentUri)
@@ -370,6 +413,9 @@ private fun openGoogleMaps(address: String, context: Context) {
     context.startActivity(mapIntent)
 }
 
+/**
+ * The days of the week.
+ */
 private enum class DayOfWeek(val day: String) {
     MONDAY("Monday"),
     TUESDAY("Tuesday"),

@@ -46,6 +46,14 @@ import com.example.madcapstone.ui.theme.customTopAppBarColor
 import com.example.madcapstone.utils.Utils
 import com.example.madcapstone.viewmodels.TripViewModel
 
+/**
+ * Trips list screen.
+ *
+ * @param navigateTo The function to navigate to a screen
+ * @param viewModel The trip view model
+ *
+ * @author Julian Kruithof
+ */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun TripsListScreen(navigateTo: (String) -> Unit, viewModel: TripViewModel) {
@@ -65,6 +73,13 @@ fun TripsListScreen(navigateTo: (String) -> Unit, viewModel: TripViewModel) {
     }
 }
 
+/**
+ * The content of the trips list screen.
+ *
+ * @param modifier The modifier
+ * @param viewModel The trip view model
+ * @param navigateTo The function to navigate to a screen
+ */
 @Composable
 private fun ScreenContent(
     modifier: Modifier,
@@ -125,6 +140,14 @@ private fun ScreenContent(
     }
 }
 
+/**
+ * Display the trips.
+ *
+ * @param modifier The modifier
+ * @param trips The trips
+ * @param onTripDelete The function to delete a trip
+ * @param onTripSelect The function to select a trip
+ */
 @Composable
 private fun DisplayTrips(
     modifier: Modifier,
@@ -140,6 +163,13 @@ private fun DisplayTrips(
     }
 }
 
+/**
+ * Display a trip.
+ *
+ * @param trip The trip
+ * @param onDelete The function to delete a trip
+ * @param onSelect The function to select a trip
+ */
 @Composable
 private fun TripItem(trip: Trip, onDelete: () -> Unit, onSelect: () -> Unit) {
     Column(

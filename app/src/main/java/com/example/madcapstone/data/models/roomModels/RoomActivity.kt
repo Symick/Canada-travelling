@@ -5,6 +5,24 @@ import androidx.room.PrimaryKey
 import com.example.madcapstone.data.models.firebaseModels.OpeningHours
 import com.google.firebase.firestore.DocumentId
 
+/**
+ * Data class for the RoomActivity object.
+ * This class is used to store the activity information of a location.
+ *
+ * @param activityId The id of the activity
+ * @param name The name of the activity
+ * @param description The description of the activity
+ * @param imageUrl The url of the image of the activity
+ * @param websiteUrl The url of the website of the activity
+ * @param location The location of the activity
+ * @param address The address of the activity
+ * @param minPrice The minimum price of the activity
+ * @param maxPrice The maximum price of the activity
+ * @param isFree A boolean that indicates if the activity is free
+ * @param openingHours A map of the opening hours of the activity
+ *
+ * @property activityId The id of the activity
+ */
 @Entity(tableName = "activityTable")
 data class RoomActivity(
     @PrimaryKey(autoGenerate = false)

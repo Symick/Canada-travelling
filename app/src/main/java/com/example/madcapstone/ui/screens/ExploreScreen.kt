@@ -1,6 +1,5 @@
 package com.example.madcapstone.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -40,7 +39,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -64,6 +62,14 @@ import com.example.madcapstone.viewmodels.TripViewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 
+/**
+ * Explore screen.
+ *
+ * @param viewModel The activity view model
+ * @param navigateTo The function to navigate to a screen
+ * @param tripViewModel The trip view model
+ * @author Julian Kruithof
+ */
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
 fun ExploreScreen(
@@ -92,6 +98,14 @@ fun ExploreScreen(
     }
 }
 
+/**
+ * The content of the explore screen.
+ *
+ * @param modifier The modifier
+ * @param viewModel The activity view model
+ * @param navigateTo The function to navigate to a screen
+ * @param tripViewModel The trip view model
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ScreenContent(
@@ -196,6 +210,13 @@ private fun ScreenContent(
     }
 }
 
+/**
+ * The search menu list.
+ * @param cities The cities which were found
+ * @param onClick The on click function fired when a list item is clicked
+ * @param query The query which is searched for
+ *
+ */
 @Composable
 private fun SearchMenuList(
     cities: Resource<List<City>>,
@@ -241,6 +262,13 @@ private fun SearchMenuList(
 }
 
 
+/**
+ * The filter dialog.
+ *
+ * @param onDismissRequest The function to dismiss the dialog
+ * @param onConfirm The function to confirm the dialog
+ * @param filterState The filter state
+ */
 @Composable
 private fun FilterDialog(
     onDismissRequest: () -> Unit,
@@ -293,6 +321,13 @@ private fun FilterDialog(
     )
 }
 
+/**
+ * The filter form.
+ *
+ * @param filterState The filter state
+ * @param range The range
+ * @param onRangeChange The function to change the range
+ */
 @Composable
 private fun FilterForm(
     filterState: MutableState<SearchFilterState>,
@@ -334,6 +369,14 @@ private fun FilterForm(
     }
 }
 
+/**
+ * The activity list.
+ *
+ * @param activityList The activity list
+ * @param onClick The on click function
+ * @param tripViewModel The trip view model
+ * @param navigateTo The function to navigate to a screen
+ */
 @Composable
 fun ActivityList(
     activityList: Resource<List<FirestoreActivity>>,
@@ -354,7 +397,7 @@ fun ActivityList(
                 ExploreActivityCard(
                     activity = activity, onClick = {
                         onClick(activity)
-                                                   },
+                    },
                     onHearted = {
                         if (currentUser == null) {
                             navigateTo(Screens.SignInScreen.route)

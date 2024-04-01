@@ -7,6 +7,11 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 
+/**
+ * Class used to define navigation animations.
+ *
+ * @author Julian Kruithof
+ */
 class NavigationAnimations {
     companion object {
         private const val NAVIGATION_ANIMATION_DURATION = 300

@@ -20,6 +20,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 
+
+/**
+ * View model for the screen working with activities.
+ *
+ * @param application The application
+ *
+ * @author Julian Kruithof
+ */
 @OptIn(FlowPreview::class)
 class ActivityViewModel(application: Application) : AndroidViewModel(application) {
     private val activityRepository = ActivityRepository()
