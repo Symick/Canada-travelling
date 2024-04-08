@@ -232,11 +232,9 @@ private fun DisplayRecentlyViewed(
         }
 
         is Resource.Empty -> {
-            Text(text = "empty")
         }
 
         else -> {
-            Text(text = "initial")
         }
     }
 }
