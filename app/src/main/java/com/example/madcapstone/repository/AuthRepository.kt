@@ -117,6 +117,7 @@ class AuthRepository(private val context: Context) {
         // If there is no user in the Room DB, sync the data from Firebase
         if (currentUser == null) {
             Sync.syncRoomDbFromFirebase(context, user.id) // Sync data from Firebase to Room DB
+            userDao.insertUser(user) // Insert the user in the Room DB
             return
         }
 
@@ -125,6 +126,8 @@ class AuthRepository(private val context: Context) {
             return
         } else {
             Sync.syncRoomDbFromFirebase(context, user.id) // Sync data from Firebase to Room DB
+            userDao.deleteUser(currentUser) // Delete the current user from the Room DB
+            userDao.insertUser(user)
         }
     }
 
